@@ -1,0 +1,2019 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Data Engineer Comeback Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky tab bar over a single reading column; each question is a collapsible card, code in mono blocks.
+   Palette: cool paper + ink blue (light), deep slate + sky (dark). Semantic amber/green only for status. */
+:root{
+  --bg:#F2F5F8; --surface:#FFFFFF; --fg:#14202B; --muted:#55667A; --line:#D5DDE6;
+  --accent:#0A6C9E; --accent-soft:#E1F0F8; --code-bg:#0F1B26; --code-fg:#DCE8F2;
+  --good:#1B7F4B; --good-soft:#E0F3E8; --warn:#9A5B00; --warn-soft:#FBEED6;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0C141B; --surface:#131E28; --fg:#DCE6EE; --muted:#8CA0B3; --line:#243342;
+  --accent:#5DC1EA; --accent-soft:#12303F; --code-fg:#D3E2EE;
+  --good:#5ED08F; --good-soft:#123423; --warn:#F0B54D; --warn-soft:#3A2B0E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C141B; --surface:#131E28; --fg:#DCE6EE; --muted:#8CA0B3; --line:#243342;
+  --accent:#5DC1EA; --accent-soft:#12303F; --code-fg:#D3E2EE;
+  --good:#5ED08F; --good-soft:#123423; --warn:#F0B54D; --warn-soft:#3A2B0E; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:860px;margin:0 auto}
+header.top{padding-block:28px 14px}
+.kicker{font:500 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font:700 clamp(26px,5vw,38px)/1.1 var(--f-display);margin:6px 0 8px;text-wrap:balance}
+.sub{color:var(--muted);max-width:62ch;margin:0}
+.progress{display:flex;align-items:center;gap:12px;margin-top:16px;font:500 13px var(--f-mono);color:var(--muted)}
+.bar{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden;max-width:320px}
+.bar i{display:block;height:100%;width:0;background:var(--good);transition:width .3s}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;border-bottom:1px solid var(--line);margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.tabrow{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.tabrow button{flex:none;font:500 14px var(--f-body);padding:7px 13px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:6px;cursor:pointer}
+.tabrow button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.tools{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.tools input{flex:1;min-width:180px;font:14px var(--f-body);padding:8px 11px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg)}
+.tools button{font:500 13px var(--f-body);padding:8px 12px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:6px;cursor:pointer}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+section.panel{padding-top:22px}
+section.panel[hidden]{display:none!important}
+h2{font:700 24px var(--f-display);margin:0 0 4px}
+h3{font:600 16px var(--f-display);margin:26px 0 10px;color:var(--accent);letter-spacing:.01em}
+.lead{color:var(--muted);margin:0 0 18px;max-width:64ch}
+details.q{background:var(--surface);border:1px solid var(--line);border-radius:8px;margin-bottom:8px}
+details.q[open]{border-color:var(--accent)}
+details.q.done{border-left:4px solid var(--good)}
+summary{cursor:pointer;padding:11px 14px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:flex-start}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";font:500 15px var(--f-mono);color:var(--accent);width:14px;flex:none}
+details[open]>summary::before{content:"–"}
+summary .t{flex:1;min-width:0}
+.lv{flex:none;font:500 11px var(--f-mono);padding:2px 7px;border-radius:4px;background:var(--accent-soft);color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.lv.hard{background:var(--warn-soft);color:var(--warn)}
+.a{padding:2px 14px 14px 38px;min-width:0}
+.a p{margin:8px 0}
+.a ul,.a ol{margin:8px 0;padding-left:20px}
+.a li{margin:3px 0}
+.a code{font:13px var(--f-mono);background:var(--accent-soft);padding:1px 5px;border-radius:4px}
+pre{position:relative;margin:10px 0;background:var(--code-bg,#0F1B26);color:var(--code-fg);border-radius:6px;padding:12px 14px;overflow-x:auto;font:12.5px/1.55 var(--f-mono);max-width:100%}
+:root{--code-bg:#0F1B26}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--code-bg:#0A121A}}
+:root[data-theme="dark"]{--code-bg:#0A121A}
+pre code{background:none;padding:0;font:inherit;color:inherit}
+.cp{position:absolute;top:6px;right:6px;font:11px var(--f-mono);background:#ffffff1f;color:var(--code-fg);border:0;border-radius:4px;padding:3px 7px;cursor:pointer}
+.say{background:var(--warn-soft);border-left:3px solid var(--warn);padding:9px 12px;border-radius:0 6px 6px 0;margin:10px 0;font-size:14px}
+.say b{color:var(--warn)}
+.mark{margin-top:8px;font:500 12px var(--f-mono);padding:5px 10px;border-radius:5px;border:1px solid var(--line);background:var(--bg);color:var(--muted);cursor:pointer}
+details.done .mark{background:var(--good-soft);color:var(--good);border-color:var(--good)}
+.tbl{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600}
+.plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin:12px 0}
+.plan div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-width:0}
+.plan b{display:block;font:600 14px var(--f-display);color:var(--accent);margin-bottom:4px}
+.plan span{font-size:13.5px;color:var(--muted)}
+.empty{display:none;color:var(--muted);padding:20px 0}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="kicker">Data Engineering · 5 yrs experience · Azure + Spark</div>
+  <h1>Data Engineer Comeback Guide</h1>
+  <p class="sub">SQL, PySpark, ADF, SCD and CDC with interview answers you can say out loud and code you can type from memory. Open a question, answer it in your head first, then check.</p>
+  <div class="progress"><span id="pc">0 / 0 revised</span><div class="bar"><i id="pb"></i></div></div>
+</header>
+
+<nav class="tabs">
+  <div class="tabrow" role="tablist" id="tabrow">
+    <button role="tab" data-tab="start">Start here</button>
+    <button role="tab" data-tab="cv">My CV Qs</button>
+    <button role="tab" data-tab="sql">SQL</button>
+    <button role="tab" data-tab="spark">PySpark</button>
+    <button role="tab" data-tab="dbx">Databricks</button>
+    <button role="tab" data-tab="adf">ADF</button>
+    <button role="tab" data-tab="cicd">CI/CD</button>
+    <button role="tab" data-tab="scd">SCD &amp; CDC</button>
+    <button role="tab" data-tab="design">Scenarios</button>
+    <button role="tab" data-tab="cheat">Cheatsheet</button>
+  </div>
+  <div class="tools">
+    <input id="q" type="search" placeholder="Search all questions (try: merge, skew, watermark, lag)" aria-label="Search questions">
+    <button id="exp">Expand all</button>
+  </div>
+</nav>
+
+<!-- ============ START ============ -->
+<section class="panel" id="p-start">
+<h2>Start here</h2>
+<p class="lead">You have 5 years of experience and a 1 year gap. Interviewers will test fundamentals hard, to see if you still think like an engineer. Fundamentals come back fast. A week of focused revision is enough.</p>
+
+<h3>7-day plan (about 3 hours a day)</h3>
+<div class="plan">
+<div><b>Day 1 · SQL windows</b><span>Window functions, dedup, top-N, gaps and islands. Type every query yourself in any free SQL sandbox.</span></div>
+<div><b>Day 2 · SQL rest</b><span>Joins, NOT EXISTS vs NOT IN, CTEs, recursive CTE, indexes, tuning, 5 timed problems.</span></div>
+<div><b>Day 3 · PySpark core</b><span>Architecture, lazy eval, shuffle, joins, partitioning, skew, AQE, caching.</span></div>
+<div><b>Day 4 · PySpark code + Databricks</b><span>Window code, flatten JSON, dedup, then the Databricks tab: Delta internals, Unity Catalog, Auto Loader, Workflows.</span></div>
+<div><b>Day 5 · ADF</b><span>Components, triggers, watermark pattern, metadata-driven pipeline, CI/CD, error handling.</span></div>
+<div><b>Day 6 · SCD, CDC, modeling</b><span>SCD 1/2 in SQL and Delta, CDC types, star schema, idempotent loads.</span></div>
+<div><b>Day 7 · Mock</b><span>Rewrite your project story, answer the Scenarios tab aloud, revisit everything not marked revised.</span></div>
+</div>
+
+<h3>What a 5-year interviewer expects</h3>
+<ul>
+<li>Explain why you picked a design, not only what you built. "Why Delta MERGE and not overwrite?" "Why tumbling window and not schedule?"</li>
+<li>Write a window-function or MERGE query live without help.</li>
+<li>Explain a slow Spark job from the Spark UI: skew, shuffle, spill, small files.</li>
+<li>Own an end-to-end pipeline: ingestion, incremental logic, failure handling, monitoring, cost.</li>
+</ul>
+
+<h3>Answering "why the 1 year gap?"</h3>
+<div class="say"><b>Say it like this.</b> "I'm still at EY GDS. After [my last project ended in ___], I was on the bench waiting for a client allocation, which was slow. In June I worked on a Databricks FinOps proof of concept, and I've kept my skills sharp by [only say what's true, e.g. practicing SQL and PySpark, preparing for interviews]. I'm looking for a role where I can work on pipelines full time." Keep it short, factual, with no apology, then pivot to your strongest project. <u>Only claim what you did.</u> If you build a small project this week (ADF copy to ADLS, Databricks transforms, SCD2 dimension), you can mention it truthfully as something you built recently, and you will have real details to talk about.</div>
+
+<h3>Top 20 things you must be able to say in 30 seconds</h3>
+<details class="q" data-lvl="core"><summary><span class="t">The 20-line rapid recall list</span><span class="lv">Core</span></summary><div class="a">
+<ol>
+<li>ROW_NUMBER is unique, RANK leaves gaps on ties, DENSE_RANK doesn't.</li>
+<li>WHERE filters rows before grouping, HAVING filters groups after.</li>
+<li><code>NOT IN</code> returns nothing if the subquery has a NULL. Use <code>NOT EXISTS</code>.</li>
+<li>Transformations are lazy, actions trigger a job. Wide transformations cause a shuffle.</li>
+<li>A job splits into stages at shuffle boundaries. One task processes one partition.</li>
+<li><code>repartition</code> shuffles and can increase or decrease. <code>coalesce</code> only decreases, no full shuffle.</li>
+<li>Broadcast the small side of a join (default threshold 10 MB). Otherwise it's sort-merge.</li>
+<li>Skew shows as one task far slower than the median. Fix with AQE skew join, salting or broadcast.</li>
+<li>Default <code>spark.sql.shuffle.partitions</code> is 200. AQE can coalesce them.</li>
+<li>Parquet is columnar and splittable. Delta adds ACID, time travel, MERGE on top of Parquet.</li>
+<li>Avoid Python UDFs, use built-in functions. If you must, use pandas UDFs.</li>
+<li>SCD1 overwrites, SCD2 adds a new row with effective dates, SCD3 keeps previous value in a column.</li>
+<li>CDC captures only inserts, updates and deletes. Watermark loads miss hard deletes.</li>
+<li>Delta MERGE needs the source deduplicated by key, or it fails with multiple matches.</li>
+<li>ADF Integration Runtime: Azure (cloud), Self-hosted (on-prem/VNet), Azure-SSIS.</li>
+<li>Tumbling window trigger: fixed windows, backfill, dependencies, retry. Schedule trigger: simple clock.</li>
+<li>ForEach can't be nested in ForEach. Use Execute Pipeline for the inner loop.</li>
+<li>Lookup activity returns max 5000 rows and 4 MB.</li>
+<li>Make every load idempotent so a rerun produces the same result.</li>
+<li>Secrets live in Key Vault. Auth with managed identity.</li>
+</ol>
+<button class="mark">Mark as revised</button></div></details>
+</section>
+
+<!-- ============ MY CV ============ -->
+<section class="panel" id="p-cv" hidden>
+<h2>Questions your CV invites</h2>
+<p class="lead">Interviewers read the CV and ask about every claim. These are built from your CV: Oracle, DB2, SAP HANA and Teradata migration to Azure, ADF, Databricks, Delta, Control-M, Jenkins and GitHub, and the Databricks FinOps Compass proof of concept. Answers are frames. Replace the [brackets] with your real details and numbers, and drop anything you did not do.</p>
+
+<details class="q" data-lvl="core"><summary><span class="t">Tell me about yourself (90-second pitch)</span><span class="lv">Core</span></summary><div class="a">
+<div class="say"><b>Frame.</b> "I'm an Azure data engineer with almost 5 years of experience. I started at Infosys in 2021 after a B.Tech in Mechanical Engineering, and moved into data engineering building ADF and Databricks pipelines. I migrated data from Oracle, DB2, SAP HANA and Teradata into Azure, built PySpark and Delta transformations, and ran the workflows through Control-M. I joined EY GDS in February 2025, where [your real project work, with dates], followed by a period on the bench and a Databricks cost-monitoring proof of concept in June. I'm DP-203 certified, and I'm looking for a [role] where I can own pipelines end to end."</div>
+<p>End with one project result with a number, then stop. Practice until it fits in 90 seconds.</p>
+<p><b>Why mechanical to data?</b> Keep it positive and brief: you liked working with data and systems, you trained for it, and 5 years of delivery proves it.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Walk me through migrating Oracle / DB2 / SAP HANA / Teradata data to Azure end to end</span><span class="lv hard">Hard</span></summary><div class="a">
+<ol>
+<li><b>Assess:</b> inventory tables, sizes, dependencies, daily change volume, SLAs, which objects are in scope (tables, views, stored procedures, jobs).</li>
+<li><b>Design target:</b> landing in ADLS (bronze, Parquet or Delta), then Databricks transformations to silver and gold. Decide history, partitioning and naming.</li>
+<li><b>Extract:</b> ADF Copy with the source connector through a <b>self-hosted IR</b> (on-prem or private network). Use partitioned reads for big tables, metadata-driven loop for many tables.</li>
+<li><b>Convert logic:</b> rewrite SQL and procedures into Spark SQL or PySpark, map data types (see the dialect question).</li>
+<li><b>Initial load</b> of history, then <b>incremental/CDC</b> sync until cutover.</li>
+<li><b>Validate:</b> row counts, aggregates, hash comparisons, sample diffs, business sign-off.</li>
+<li><b>Cutover:</b> parallel run, switch consumers, keep rollback plan, decommission later.</li>
+</ol>
+<p>Then add what you personally owned: [e.g. the ADF framework, the validation scripts, the performance tuning].</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">How did you validate that migrated data matched the source?</span><span class="lv hard">Hard</span></summary><div class="a">
+<ul>
+<li><b>Level 1:</b> row counts per table and per partition or date.</li>
+<li><b>Level 2:</b> column aggregates: sum, min, max, count of nulls, distinct counts on key columns.</li>
+<li><b>Level 3:</b> row-level hash comparison (hash the concatenated columns on both sides, compare by key), or <code>exceptAll</code> both ways on a sample or full set.</li>
+<li><b>Watch for:</b> trailing spaces in CHAR columns (DB2), timestamp precision and time zones, decimal scale, NULL vs empty string (Oracle treats empty string as NULL), character encoding.</li>
+</ul>
+<pre><code>src = spark.read.format("delta").load(src_path)      # extracted from legacy DB
+tgt = spark.table("main.silver.orders")
+cols = [c for c in src.columns if c not in ("load_ts",)]
+
+def with_hash(df):
+    return df.withColumn("h", F.sha2(F.concat_ws("||", *[F.coalesce(F.col(c).cast("string"), F.lit("&lt;NULL&gt;")) for c in cols]), 256))
+
+a, b = with_hash(src).select("order_id", "h"), with_hash(tgt).select("order_id", "h")
+missing_in_tgt = a.join(b, "order_id", "left_anti").count()
+missing_in_src = b.join(a, "order_id", "left_anti").count()
+mismatch = a.alias("a").join(b.alias("b"), "order_id").filter("a.h &lt;&gt; b.h").count()
+print(src.count(), tgt.count(), missing_in_tgt, missing_in_src, mismatch)</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">How do you extract a very large table from Oracle or DB2 quickly?</span><span class="lv hard">Hard</span></summary><div class="a">
+<ul>
+<li><b>ADF Copy:</b> enable partition options (physical partitions, or dynamic range on a numeric or date column), raise parallel copies, make sure the source DB and the self-hosted IR machine can handle the load. Add more IR nodes if the IR is the bottleneck. Write Parquet.</li>
+<li><b>Spark JDBC:</b> parallel read with <code>partitionColumn</code>, <code>lowerBound</code>, <code>upperBound</code>, <code>numPartitions</code>, and a larger <code>fetchsize</code>.</li>
+<li>Run during low-load windows, avoid long locks (read committed or snapshot reads), split by date ranges, make each chunk restartable.</li>
+</ul>
+<pre><code>df = (spark.read.format("jdbc")
+      .option("url", jdbc_url).option("dbtable", "SALES.ORDERS")
+      .option("user", dbutils.secrets.get("kv", "db-user"))
+      .option("password", dbutils.secrets.get("kv", "db-pwd"))
+      .option("partitionColumn", "ORDER_ID").option("lowerBound", 1)
+      .option("upperBound", 500000000).option("numPartitions", 32)
+      .option("fetchsize", 10000).load())</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">SQL dialect and data type gotchas when moving from Oracle, DB2, Teradata, SAP HANA to Spark SQL</span><span class="lv">Core</span></summary><div class="a">
+<div class="tbl"><table>
+<tr><th>Source</th><th>Gotcha</th><th>Spark SQL equivalent</th></tr>
+<tr><td>Oracle</td><td><code>NVL</code>, <code>DECODE</code>, <code>ROWNUM</code>, <code>SYSDATE</code>, <code>MINUS</code>, <code>CONNECT BY</code>, <code>DUAL</code></td><td><code>COALESCE</code>, <code>CASE</code>, <code>ROW_NUMBER()</code> or <code>LIMIT</code>, <code>current_timestamp()</code>, <code>EXCEPT</code>, recursive CTE, no DUAL needed</td></tr>
+<tr><td>Oracle</td><td>Empty string is NULL. <code>NUMBER</code> without scale. <code>DATE</code> includes time.</td><td>Decide the mapping explicitly: <code>DECIMAL(p,s)</code>, <code>TIMESTAMP</code></td></tr>
+<tr><td>DB2</td><td><code>FETCH FIRST n ROWS ONLY</code>, <code>VALUE()</code>, <code>CURRENT DATE</code>, padded <code>CHAR</code></td><td><code>LIMIT n</code>, <code>COALESCE</code>, <code>current_date()</code>, <code>TRIM</code> before comparing</td></tr>
+<tr><td>Teradata</td><td><code>SEL</code>, <code>ZEROIFNULL</code>, <code>SAMPLE</code>, <code>QUALIFY</code>, SET vs MULTISET tables, <code>PERIOD</code> type</td><td><code>SELECT</code>, <code>COALESCE(x,0)</code>, <code>LIMIT</code>/<code>TABLESAMPLE</code>, <code>QUALIFY</code> (supported in Databricks SQL), dedupe SET tables explicitly, split period into two columns</td></tr>
+<tr><td>SAP HANA</td><td>Calculation views and <code>ADD_DAYS</code>-style date functions, row vs column store</td><td>Materialize the view logic into tables or queries, <code>date_add</code>, <code>add_months</code></td></tr>
+</table></div>
+<p>Common to all: case sensitivity of strings, collation, NULL ordering in sorts, integer division, timestamp time zones.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">You used BMC Control-M. How did it work with ADF and Databricks?</span><span class="lv">Core</span></summary><div class="a">
+<p>Describe what your team actually did. A typical setup:</p>
+<ul>
+<li>Control-M is the enterprise scheduler. It handles job dependencies across systems, calendars, SLAs, restart and alerting, and it can trigger ADF pipelines or Databricks jobs through its Azure integrations or REST calls, then poll status.</li>
+<li>Control-M decides <i>when and in what order</i> across systems, ADF and Databricks do the actual data work.</li>
+<li><b>Failure handling:</b> alerts to the support team, rerun from a failed step, SLA monitoring and escalation, passing the business date as a parameter.</li>
+<li><b>Why not only ADF triggers?</b> A company-wide scheduler gives one place for cross-system dependencies and operations support, but adds another layer to maintain.</li>
+</ul>
+<p>Be ready to name one concrete job flow you ran: [source extract → ADF pipeline → Databricks notebook → validation → downstream job].</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">You used Jenkins and GitHub for deployments. Explain the release flow</span><span class="lv">Core</span></summary><div class="a">
+<ol>
+<li>Develop on a feature branch in Git, open a pull request, code review.</li>
+<li>Merge to main triggers a <b>Jenkins</b> job: lint and unit tests, build artifacts (wheel or notebooks, ADF ARM templates).</li>
+<li>Deploy to dev, test, then prod with environment-specific parameters, approval gate before prod.</li>
+<li>Pre and post steps: stop and restart ADF triggers, run smoke tests, notify the team, keep a rollback (previous version tag).</li>
+<li>Secrets from Key Vault or Jenkins credentials, never in the repo.</li>
+</ol>
+<p>Add what you personally did: [wrote the Jenkinsfile, managed releases, fixed a failed deployment].</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Give an example of a performance problem you fixed (use this frame)</span><span class="lv hard">Hard</span></summary><div class="a">
+<p>Your CV says "root-cause analysis, SQL query optimization and pipeline performance tuning" but has no numbers. Prepare two stories in this shape:</p>
+<ol>
+<li><b>Symptom:</b> "[pipeline] took [X hours], missing its [time] SLA."</li>
+<li><b>Diagnosis:</b> what you looked at (execution plan, Spark UI, ADF copy throughput) and what you found.</li>
+<li><b>Fix:</b> one or two concrete changes.</li>
+<li><b>Result:</b> "[X hours] to [Y minutes]", fewer failures, lower cost.</li>
+</ol>
+<p><b>Typical real causes to choose from if they match your experience:</b> missing or unused index, non-SARGable filter, full reload instead of incremental, one huge copy not partitioned, skewed join key, many small files, shuffle partitions mis-sized, collecting to the driver, undersized cluster.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Databricks FinOps Compass: what is it and how would it work?</span><span class="lv hard">Hard</span></summary><div class="a">
+<p>Your CV says you contributed to the whiteboarding and a proof of concept for a tool that gives insights into Databricks cost, usage and operations. Be precise about your part.</p>
+<div class="say"><b>Frame.</b> "It was a proof of concept to show cost and usage of Databricks in one place and let people ask questions in natural language. The data comes from Databricks system tables (billing usage, prices, compute and job metadata). We modeled it into gold tables, then exposed it through [Genie / an agent behind a FastAPI service and a Next.js interface]. My part was [whiteboarding the design, the data model, the queries, the API...]."</div>
+<p>A cost-by-day query you should be able to write (check column names in your workspace):</p>
+<pre><code>SELECT u.usage_date, u.sku_name,
+       SUM(u.usage_quantity)                              AS dbus,
+       SUM(u.usage_quantity * p.pricing.default)          AS est_cost
+FROM system.billing.usage u
+JOIN system.billing.list_prices p
+  ON u.sku_name = p.sku_name
+ AND u.usage_start_time &gt;= p.price_start_time
+ AND (p.price_end_time IS NULL OR u.usage_start_time &lt; p.price_end_time)
+WHERE u.usage_date &gt;= date_sub(current_date(), 30)
+GROUP BY u.usage_date, u.sku_name
+ORDER BY u.usage_date;</code></pre>
+<p><b>Follow-ups to expect:</b> how to attribute cost to teams (cluster and job tags), how you would detect cost anomalies, how you make the natural-language answers trustworthy.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Genie, Genie Code, knowledge bases, agent with FastAPI and Next.js: how do you explain these?</span><span class="lv">Core</span></summary><div class="a">
+<p>Your CV says "explored", so describe it as exploration and be clear about what you built versus tried.</p>
+<ul>
+<li><b>Genie</b> turns natural-language questions into SQL over Unity Catalog tables. Quality depends on good table and column descriptions, example queries and instructions, and curated tables.</li>
+<li><b>Risks:</b> wrong joins, ambiguous questions, hallucinated answers. Mitigate with curated gold tables, sample questions, showing the generated SQL, evaluation sets of known questions with expected answers, and read-only permissions.</li>
+<li><b>Architecture sketch:</b> UI (Next.js) → API (FastAPI) → Databricks (SQL warehouse or Genie API) → results back, with authentication, logging and rate limits.</li>
+<li><b>Security:</b> use a service principal with least privilege, never expose tokens to the browser, respect Unity Catalog permissions.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Your title is Senior Analyst at EY but you describe data engineering. How do you explain it?</span><span class="lv">Core</span></summary><div class="a">
+<p>Say: titles at consulting firms differ from the work. Then describe the actual work in two sentences with tools and outcomes. For a "senior" role also prepare:</p>
+<ul>
+<li>How you estimate and plan a pipeline, and handle changing requirements.</li>
+<li>How you review other people's code and what you look for.</li>
+<li>How you mentor juniors or onboard to a project.</li>
+<li>How you talk to business stakeholders about delays or data issues.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">DP-203 and your other certifications: what will they ask?</span><span class="lv">Core</span></summary><div class="a">
+<p>Expect "which DP-203 topic have you used in real work?" Answer with ADF, ADLS design (partitioning, lifecycle), Databricks transformations, security (Key Vault, managed identity, RBAC), monitoring. Be ready on topics you didn't use at work: Synapse (dedicated vs serverless pool, distribution types hash, round-robin, replicated), Event Hubs and Stream Analytics.</p>
+<p>A quick certification to consider after this prep is the Databricks Data Engineer Associate, since the role is Databricks-heavy.</p>
+<button class="mark">Mark as revised</button></div></details>
+</section>
+
+<!-- ============ SQL ============ -->
+<section class="panel" id="p-sql" hidden>
+<h2>SQL</h2>
+<p class="lead">Examples use <code>employees(emp_id, name, dept_id, salary, manager_id, hire_date)</code>, <code>orders(order_id, customer_id, order_date, amount)</code>, <code>customers(customer_id, name)</code>. Syntax is T-SQL/ANSI. Spark SQL differences are noted.</p>
+
+<h3>Window functions</h3>
+<details class="q" data-lvl="core"><summary><span class="t">ROW_NUMBER vs RANK vs DENSE_RANK?</span><span class="lv">Core</span></summary><div class="a">
+<p>Salaries 100, 100, 90. ROW_NUMBER gives 1,2,3 (always unique). RANK gives 1,1,3 (gap after tie). DENSE_RANK gives 1,1,2 (no gap).</p>
+<p>Nth highest: use DENSE_RANK. Dedup: use ROW_NUMBER. Top N including ties: use RANK or DENSE_RANK.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Second highest salary in each department</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>SELECT * FROM (
+  SELECT e.*, DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS dr
+  FROM employees e
+) t
+WHERE dr = 2;</code></pre>
+<p>You can't filter on a window function in WHERE directly, so wrap it in a subquery or CTE. Snowflake and Databricks also support <code>QUALIFY dr = 2</code>.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Remove duplicates, keep the latest record</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>WITH x AS (
+  SELECT *, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY updated_at DESC) AS rn
+  FROM customers
+)
+SELECT * FROM x WHERE rn = 1;
+
+-- SQL Server: delete the duplicates through the CTE
+DELETE FROM x WHERE rn &gt; 1;</code></pre>
+<p>Always add a tiebreaker to ORDER BY if updated_at can tie, otherwise results are non-deterministic.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Running total and 7-day moving average</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>SELECT order_date, amount,
+  SUM(amount) OVER (ORDER BY order_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total,
+  AVG(amount) OVER (ORDER BY order_date
+        ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)         AS ma_7
+FROM daily_sales;</code></pre>
+<p><b>ROWS vs RANGE:</b> with ORDER BY and no frame, the default is RANGE, which treats tied values as one peer group and is slower. Always write <code>ROWS</code> explicitly.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Month-over-month growth with LAG</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>WITH m AS (
+  SELECT DATE_TRUNC('month', order_date) AS mth, SUM(amount) AS rev
+  FROM orders GROUP BY DATE_TRUNC('month', order_date)
+)
+SELECT mth, rev,
+       LAG(rev) OVER (ORDER BY mth) AS prev_rev,
+       ROUND(100.0 * (rev - LAG(rev) OVER (ORDER BY mth))
+             / NULLIF(LAG(rev) OVER (ORDER BY mth), 0), 2) AS mom_pct
+FROM m;</code></pre>
+<p>Use NULLIF to avoid divide by zero. T-SQL: <code>DATEFROMPARTS(YEAR(d), MONTH(d), 1)</code> instead of DATE_TRUNC. LEAD is the same but looks forward.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Gaps and islands: users with 3+ consecutive login days</span><span class="lv hard">Hard</span></summary><div class="a">
+<p>Trick: subtract the row number from the date. Consecutive dates give the same constant, which becomes the island id.</p>
+<pre><code>WITH d AS (SELECT DISTINCT user_id, login_date FROM logins),
+g AS (
+  SELECT user_id, login_date,
+         DATEADD(day, -ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY login_date), login_date) AS grp
+  FROM d
+)
+SELECT user_id, MIN(login_date) AS start_dt, MAX(login_date) AS end_dt, COUNT(*) AS days
+FROM g
+GROUP BY user_id, grp
+HAVING COUNT(*) &gt;= 3;</code></pre>
+<p>Spark SQL: <code>date_sub(login_date, row_number() over (...))</code>. Same pattern solves "consecutive months", "longest streak", "sensor on/off intervals".</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Customers who made a purchase on day 1 and came back on day 2 (retention)</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>SELECT COUNT(DISTINCT b.customer_id) * 1.0 / COUNT(DISTINCT a.customer_id) AS d1_retention
+FROM (SELECT customer_id, MIN(order_date) AS first_dt FROM orders GROUP BY customer_id) a
+LEFT JOIN orders b
+  ON b.customer_id = a.customer_id
+ AND b.order_date = DATEADD(day, 1, a.first_dt);</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">First and last order amount per customer in one query</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>SELECT DISTINCT customer_id,
+  FIRST_VALUE(amount) OVER (PARTITION BY customer_id ORDER BY order_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS first_amt,
+  LAST_VALUE(amount)  OVER (PARTITION BY customer_id ORDER BY order_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_amt
+FROM orders;</code></pre>
+<p>Classic trap: LAST_VALUE with the default frame returns the current row, so you must extend the frame to UNBOUNDED FOLLOWING.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Joins, sets, subqueries</h3>
+<details class="q" data-lvl="core"><summary><span class="t">Employees earning more than their manager</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>SELECT e.name
+FROM employees e
+JOIN employees m ON e.manager_id = m.emp_id
+WHERE e.salary &gt; m.salary;</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Customers with no orders. NOT IN vs NOT EXISTS vs LEFT JOIN</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>-- Best: NOT EXISTS
+SELECT c.* FROM customers c
+WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id);
+
+-- Also fine: anti join
+SELECT c.* FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.customer_id
+WHERE o.customer_id IS NULL;</code></pre>
+<p><b>Trap:</b> <code>NOT IN (subquery)</code> returns zero rows if the subquery contains even one NULL, because <code>x NOT IN (1, NULL)</code> evaluates to UNKNOWN. NOT EXISTS is NULL-safe.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Join types and what happens with duplicate keys</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>INNER</b> matching rows only. <b>LEFT</b> all left plus matches. <b>FULL</b> all from both. <b>CROSS</b> cartesian product.</li>
+<li><b>SEMI</b> (EXISTS) returns left rows that have a match, no duplicates. <b>ANTI</b> returns left rows with no match.</li>
+<li><b>Row explosion:</b> if both sides have 3 rows for the same key you get 9. Always check the grain of both tables before joining. Count rows before and after.</li>
+<li>A filter on the right table in WHERE turns a LEFT JOIN into an INNER JOIN. Put the filter in ON instead.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">UNION vs UNION ALL, EXCEPT, INTERSECT</span><span class="lv">Core</span></summary><div class="a">
+<p>UNION removes duplicates (sort or hash cost). UNION ALL keeps all rows and is faster, use it when you know there are no duplicates. EXCEPT returns rows in the first set not in the second. INTERSECT returns rows in both. All need the same column count and compatible types.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Logical order of execution, WHERE vs HAVING</span><span class="lv">Core</span></summary><div class="a">
+<p>FROM/JOIN → WHERE → GROUP BY → HAVING → SELECT (window functions evaluate here) → DISTINCT → ORDER BY → LIMIT/TOP.</p>
+<p>That's why you can't use a SELECT alias in WHERE, and can't filter on a window function in WHERE. WHERE filters rows, HAVING filters aggregated groups.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Pivot rows to columns (conditional aggregation)</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>SELECT customer_id,
+  SUM(CASE WHEN YEAR(order_date)=2025 THEN amount END) AS y2025,
+  SUM(CASE WHEN YEAR(order_date)=2026 THEN amount END) AS y2026
+FROM orders
+GROUP BY customer_id;</code></pre>
+<p>Works on every engine. Native PIVOT exists in SQL Server, Oracle and Spark, but conditional aggregation is the portable answer.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Median salary per department</span><span class="lv hard">Hard</span></summary><div class="a">
+<pre><code>-- T-SQL / Oracle / Snowflake
+SELECT DISTINCT dept_id,
+  PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) OVER (PARTITION BY dept_id) AS median_sal
+FROM employees;
+
+-- Portable: middle row(s) by row number
+WITH r AS (
+  SELECT dept_id, salary,
+    ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary) AS rn,
+    COUNT(*)     OVER (PARTITION BY dept_id) AS cnt
+  FROM employees)
+SELECT dept_id, AVG(salary) AS median_sal
+FROM r WHERE rn IN ((cnt+1)/2, (cnt+2)/2)
+GROUP BY dept_id;</code></pre>
+<p>Spark SQL: <code>percentile(salary, 0.5)</code> exact, <code>percentile_approx</code> faster on big data.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Recursive CTE: employee hierarchy</span><span class="lv hard">Hard</span></summary><div class="a">
+<pre><code>WITH org AS (
+  SELECT emp_id, name, manager_id, 0 AS lvl
+  FROM employees WHERE manager_id IS NULL          -- anchor
+  UNION ALL
+  SELECT e.emp_id, e.name, e.manager_id, o.lvl + 1  -- recursive member
+  FROM employees e JOIN org o ON e.manager_id = o.emp_id
+)
+SELECT * FROM org ORDER BY lvl;</code></pre>
+<p>Anchor member + UNION ALL + recursive member that joins back to the CTE. Stops when the recursive part returns no rows. Guard against cycles with a max level (<code>OPTION (MAXRECURSION 100)</code> in T-SQL).</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Find missing IDs in a sequence</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>SELECT id + 1 AS gap_start, next_id - 1 AS gap_end
+FROM (SELECT id, LEAD(id) OVER (ORDER BY id) AS next_id FROM t) x
+WHERE next_id - id &gt; 1;</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Concepts and tuning</h3>
+<details class="q" data-lvl="core"><summary><span class="t">CTE vs subquery vs temp table vs view</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>CTE:</b> readability, can be recursive. Not materialized by default in most engines, so referencing it twice may run it twice.</li>
+<li><b>Subquery:</b> inline, same plan as a CTE usually.</li>
+<li><b>Temp table:</b> physically stored, can be indexed, statistics exist. Best when reused many times or the intermediate result is large.</li>
+<li><b>View:</b> saved query, no data stored. <b>Materialized view:</b> stores results, needs refresh.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Indexes and query tuning checklist</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Clustered:</b> defines physical row order, one per table. <b>Non-clustered:</b> separate structure with pointers, many allowed. <b>Covering index:</b> includes all columns the query needs (INCLUDE) so no lookup.</li>
+<li><b>SARGable predicates:</b> <code>WHERE order_date &gt;= '2026-01-01'</code> uses an index, <code>WHERE YEAR(order_date)=2026</code> does not. Don't wrap indexed columns in functions.</li>
+<li>Read the execution plan: seek vs scan, key lookups, spills, big row-count estimate mismatches (stale statistics).</li>
+<li>Select only needed columns, filter early, avoid <code>SELECT *</code>, avoid correlated subqueries on big tables, prefer set-based over cursors.</li>
+<li>Partition large tables by date, update statistics, check blocking and missing indexes.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Quick-fire definitions interviewers ask</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>DELETE</b> removes rows, logged, can have WHERE, can roll back. <b>TRUNCATE</b> removes all rows fast, minimal logging, resets identity. <b>DROP</b> removes the object.</li>
+<li><b>Primary key</b> unique + not null, one per table. <b>Unique key</b> unique, allows a NULL (engine dependent), many per table.</li>
+<li><b>COALESCE</b> ANSI, many args. <b>ISNULL</b> T-SQL, two args.</li>
+<li><b>Stored procedure</b> can do DML, return multiple result sets. <b>Function</b> returns a value or table, used inside queries.</li>
+<li><b>OLTP</b> normalized, many small writes. <b>OLAP</b> denormalized star schema, big reads.</li>
+<li><b>COUNT(*)</b> counts all rows. <b>COUNT(col)</b> skips NULLs.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+</section>
+
+<!-- ============ PYSPARK ============ -->
+<section class="panel" id="p-spark" hidden>
+<h2>PySpark</h2>
+<p class="lead">Concepts first, then code. Assume <code>from pyspark.sql import functions as F, Window</code> and a SparkSession named <code>spark</code>.</p>
+
+<h3>Architecture and execution</h3>
+<details class="q" data-lvl="core"><summary><span class="t">Explain Spark architecture and how a job runs</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Driver</b> runs your code, builds the DAG, schedules tasks. <b>Executors</b> run tasks and hold cached data. <b>Cluster manager</b> (YARN, Kubernetes, Databricks) allocates resources.</li>
+<li>An <b>action</b> creates a <b>job</b>. A job is split into <b>stages</b> at shuffle boundaries. Each stage has <b>tasks</b>, one per partition.</li>
+<li>Catalyst optimizes the logical plan (predicate pushdown, column pruning, join reordering). Tungsten handles memory and code generation.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Transformations vs actions. Narrow vs wide. Lazy evaluation</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Transformations</b> (select, filter, join, groupBy) build a plan and return immediately. <b>Actions</b> (count, show, collect, write) execute it.</li>
+<li><b>Narrow:</b> each output partition depends on one input partition (filter, map, select). No shuffle. <b>Wide:</b> data moves across the network (groupBy, join, distinct, orderBy, repartition).</li>
+<li>Lazy evaluation lets Spark optimize the full plan and skip unneeded work.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">RDD vs DataFrame vs Dataset</span><span class="lv">Core</span></summary><div class="a">
+<p>RDD is low level, no schema, no Catalyst optimization. DataFrame is a table with a schema and gets Catalyst and Tungsten optimizations, so it's the default. Dataset is the typed API for Scala and Java only, not available in PySpark. Use RDDs only for unstructured data or custom partitioning logic.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">repartition vs coalesce</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><code>repartition(n)</code>: full shuffle, can increase or decrease, evenly sized partitions. <code>repartition(n, "col")</code> hash partitions by a column.</li>
+<li><code>coalesce(n)</code>: merges existing partitions, no full shuffle, only decreases, may leave uneven sizes. Use it before writing to reduce file count.</li>
+</ul>
+<pre><code>df.repartition(200, "customer_id")   # before a big join/groupBy
+df.coalesce(10).write.parquet(path)  # fewer output files</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">cache vs persist</span><span class="lv">Core</span></summary><div class="a">
+<p><code>cache()</code> is <code>persist(MEMORY_AND_DISK)</code> for DataFrames. <code>persist(level)</code> lets you choose (MEMORY_ONLY, DISK_ONLY, serialized, replicated). Cache when a DataFrame is reused by multiple actions and is expensive to recompute. Cache is lazy, the first action fills it. Call <code>unpersist()</code> when done. Don't cache everything, it evicts useful data and wastes memory.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">How does Spark join? Broadcast vs sort-merge</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Broadcast hash join:</b> small table is sent to every executor, no shuffle of the big side. Used when one side is under <code>spark.sql.autoBroadcastJoinThreshold</code> (10 MB default).</li>
+<li><b>Sort-merge join:</b> default for two large tables. Both sides shuffle on the join key, sort, then merge.</li>
+<li><b>Shuffle hash join</b> and <b>broadcast nested loop / cartesian</b> are used in special cases.</li>
+</ul>
+<pre><code>from pyspark.sql.functions import broadcast
+fact.join(broadcast(dim), "dim_id", "left")</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Data skew: how do you detect and fix it?</span><span class="lv hard">Hard</span></summary><div class="a">
+<p><b>Detect:</b> in Spark UI stage page, one task has far higher duration or shuffle read than the median. Often a hot key (NULL, "unknown", a big customer).</p>
+<p><b>Fix:</b></p>
+<ol>
+<li>Enable AQE skew join (<code>spark.sql.adaptive.skewJoin.enabled</code>).</li>
+<li>Broadcast the smaller side if it fits.</li>
+<li>Filter or handle hot keys separately (e.g. NULL keys).</li>
+<li><b>Salting:</b> add a random salt to the skewed side, explode the other side across salts.</li>
+</ol>
+<pre><code>N = 8
+big   = big.withColumn("salt", (F.rand()*N).cast("int"))
+small = small.withColumn("salt", F.explode(F.array([F.lit(i) for i in range(N)])))
+res = big.join(small, ["key", "salt"]).drop("salt")</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">What is AQE (Adaptive Query Execution)?</span><span class="lv">Core</span></summary><div class="a">
+<p>Spark 3 feature (on by default from 3.2) that re-optimizes the plan at runtime using real shuffle statistics. Three main wins: <b>coalesces</b> small shuffle partitions, <b>switches</b> sort-merge to broadcast join when a side turns out small, and <b>splits skewed</b> partitions in joins.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">spark.sql.shuffle.partitions: what is it and how do you tune it?</span><span class="lv">Core</span></summary><div class="a">
+<p>Number of partitions after a shuffle, default 200. Too few: huge partitions, spill, OOM. Too many: tiny tasks, scheduler overhead. Rule of thumb: target 100 to 200 MB per partition, and at least 2 to 3 tasks per core. With AQE on, set it high and let AQE coalesce.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">partitionBy vs bucketBy. The small files problem</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>partitionBy("date")</b> creates one folder per value, enables partition pruning. Use low-cardinality columns (date, country). High cardinality (user_id) creates millions of tiny files.</li>
+<li><b>bucketBy(n, "key")</b> hashes keys into a fixed number of files, lets joins and aggregations on that key skip the shuffle. Only for saved tables.</li>
+<li><b>Small files:</b> many files of KBs slow down listing and reads. Fix with <code>coalesce</code>/<code>repartition</code> before write, <code>maxRecordsPerFile</code>, or Delta <code>OPTIMIZE</code> (compaction).</li>
+</ul>
+<pre><code>df.repartition("date").write.partitionBy("date").mode("overwrite").parquet(path)</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Parquet vs CSV vs JSON vs Avro vs ORC vs Delta</span><span class="lv">Core</span></summary><div class="a">
+<div class="tbl"><table>
+<tr><th>Format</th><th>Layout</th><th>Use it for</th></tr>
+<tr><td>CSV/JSON</td><td>Row, text, no schema</td><td>Raw landing, interchange. Slow and big.</td></tr>
+<tr><td>Avro</td><td>Row, binary, schema embedded</td><td>Kafka, write-heavy, schema evolution</td></tr>
+<tr><td>Parquet</td><td>Columnar, compressed</td><td>Analytics. Column pruning, predicate pushdown.</td></tr>
+<tr><td>ORC</td><td>Columnar</td><td>Hive ecosystem</td></tr>
+<tr><td>Delta</td><td>Parquet + transaction log</td><td>Lakehouse. ACID, MERGE, time travel, schema enforcement.</td></tr>
+</table></div>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Reading data and common code</h3>
+<details class="q" data-lvl="core"><summary><span class="t">Read modes and handling bad records. Why define a schema?</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>PERMISSIVE</b> (default) puts bad rows into <code>_corrupt_record</code> with nulls. <b>DROPMALFORMED</b> drops them. <b>FAILFAST</b> throws on the first bad row.</li>
+<li>Define the schema explicitly. Inference scans data (slow) and can guess wrong types.</li>
+</ul>
+<pre><code>from pyspark.sql.types import *
+schema = StructType([
+  StructField("id", IntegerType(), False),
+  StructField("name", StringType(), True),
+  StructField("amount", DecimalType(12,2), True),
+  StructField("_corrupt_record", StringType(), True)])
+df = (spark.read.schema(schema)
+      .option("header", True).option("mode", "PERMISSIVE")
+      .option("columnNameOfCorruptRecord", "_corrupt_record")
+      .csv("/mnt/raw/orders/"))
+bad = df.filter(F.col("_corrupt_record").isNotNull())</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">UDF vs pandas UDF vs built-in functions</span><span class="lv">Core</span></summary><div class="a">
+<p>Python UDFs run row by row in a Python process, serialization cost, and Catalyst can't optimize them. Prefer built-in <code>pyspark.sql.functions</code>. If you need custom logic, use a <b>pandas UDF</b> (vectorized with Arrow, much faster). Last resort is a plain UDF.</p>
+<pre><code>import pandas as pd
+from pyspark.sql.functions import pandas_udf
+@pandas_udf("double")
+def to_inr(usd: pd.Series) -&gt; pd.Series:
+    return usd * 83.0</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Top 3 per group, running total, lag (window functions in PySpark)</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>w = Window.partitionBy("dept_id").orderBy(F.col("salary").desc())
+top3 = (df.withColumn("rn", F.dense_rank().over(w)).filter("rn &lt;= 3"))
+
+w2 = (Window.partitionBy("customer_id").orderBy("order_date")
+      .rowsBetween(Window.unboundedPreceding, Window.currentRow))
+df = df.withColumn("running", F.sum("amount").over(w2))
+
+df = df.withColumn("prev_amt", F.lag("amount", 1).over(
+        Window.partitionBy("customer_id").orderBy("order_date")))</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Remove duplicates: dropDuplicates vs window</span><span class="lv">Core</span></summary><div class="a">
+<pre><code># any one row per key, no control over which
+df.dropDuplicates(["customer_id"])
+
+# keep the latest by timestamp (deterministic)
+w = Window.partitionBy("customer_id").orderBy(F.col("updated_at").desc())
+latest = df.withColumn("rn", F.row_number().over(w)).filter("rn = 1").drop("rn")</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Flatten nested JSON with arrays and structs</span><span class="lv">Core</span></summary><div class="a">
+<pre><code># {"id":1,"cust":{"name":"A","city":"X"},"items":[{"sku":"p1","qty":2},{"sku":"p2","qty":1}]}
+df = spark.read.option("multiLine", True).json(path)
+
+flat = (df.select("id", "cust.name", "cust.city", F.explode_outer("items").alias("item"))
+          .select("id", "name", "city", "item.sku", "item.qty"))
+
+# JSON stored as a string column
+parsed = df.withColumn("j", F.from_json("payload", schema)).select("j.*")</code></pre>
+<p><code>explode</code> drops rows where the array is null or empty. <code>explode_outer</code> keeps them with null.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Common column operations and null handling</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>df = (df
+  .withColumn("grade", F.when(F.col("score") &gt;= 90, "A")
+                        .when(F.col("score") &gt;= 75, "B").otherwise("C"))
+  .withColumn("city", F.coalesce("city", F.lit("UNKNOWN")))
+  .withColumn("order_dt", F.to_date("order_ts", "yyyy-MM-dd HH:mm:ss"))
+  .withColumn("name", F.trim(F.upper("name")))
+  .fillna({"amount": 0})
+  .filter((F.col("amount") &gt; 0) &amp; (F.col("status").isin("NEW", "PAID")))
+  .withColumnRenamed("cust_id", "customer_id"))
+df.groupBy("dept").agg(F.count("*").alias("n"), F.sum("salary").alias("tot"),
+                       F.countDistinct("emp_id").alias("uniq"))</code></pre>
+<p>Use <code>&amp;</code>, <code>|</code>, <code>~</code> with parentheses for conditions, not <code>and/or/not</code>.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Compare two DataFrames, find new and changed rows</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>new_rows   = src.join(tgt, "id", "left_anti")
+deleted    = tgt.join(src, "id", "left_anti")
+only_in_a  = a.exceptAll(b)        # keeps duplicates; subtract() is distinct
+changed = (src.alias("s").join(tgt.alias("t"), "id")
+             .filter("s.row_hash &lt;&gt; t.row_hash"))</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Sessionization: new session after 30 min of inactivity</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>w = Window.partitionBy("user_id").orderBy("event_ts")
+ev = (df.withColumn("prev_ts", F.lag("event_ts").over(w))
+        .withColumn("new_sess", F.when(
+            (F.col("event_ts").cast("long") - F.col("prev_ts").cast("long")) &gt; 1800, 1).otherwise(0))
+        .withColumn("session_id", F.sum("new_sess").over(
+            w.rowsBetween(Window.unboundedPreceding, Window.currentRow))))</code></pre>
+<p>Flag the first row of each session, then a running sum of the flags is the session id.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Find missing dates in a date range, mask PII, add filename</span><span class="lv">Core</span></summary><div class="a">
+<pre><code># missing dates
+rng = spark.sql("SELECT explode(sequence(to_date('2026-01-01'), to_date('2026-01-31'), interval 1 day)) AS d")
+missing = rng.join(df.select(F.to_date("dt").alias("d")).distinct(), "d", "left_anti")
+
+# mask PII
+df = (df.withColumn("email", F.sha2("email", 256))
+        .withColumn("phone", F.regexp_replace("phone", r"\d(?=\d{4})", "X")))
+
+# source file name for lineage (Databricks: use _metadata.file_path)
+df = df.withColumn("src_file", F.input_file_name())</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Performance and troubleshooting</h3>
+<details class="q" data-lvl="hard"><summary><span class="t">OutOfMemory errors: driver vs executor causes and fixes</span><span class="lv hard">Hard</span></summary><div class="a">
+<p><b>Driver OOM:</b> <code>collect()</code>, <code>toPandas()</code> on big data, huge broadcast, too many small files (listing). Fix: avoid collecting, write to storage, raise <code>spark.driver.memory</code>.</p>
+<p><b>Executor OOM:</b> skewed or oversized partitions, big shuffle, caching too much, wide rows. Fix: more partitions, handle skew, raise <code>spark.executor.memory</code> and <code>spark.executor.memoryOverhead</code>, reduce cores per executor, don't cache needlessly.</p>
+<p>"Container killed by YARN for exceeding memory limits" usually means increase memoryOverhead (PySpark uses off-heap memory for Python workers).</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">How do you size a Spark job? (100 GB example)</span><span class="lv hard">Hard</span></summary><div class="a">
+<ul>
+<li>Input partitions ≈ data size / 128 MB → 100 GB ≈ 800 partitions.</li>
+<li>Executor sizing: about 4 to 5 cores per executor (HDFS/IO throughput and GC sweet spot), 4 to 8 GB memory per core including overhead.</li>
+<li>Total cores so the job finishes in a few waves: 800 tasks on 200 cores = 4 waves.</li>
+<li>Run, then tune from the Spark UI. Look at spill, GC time, skew, shuffle size. Don't guess, measure.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Performance tuning checklist (say this when asked "how do you optimize a slow job?")</span><span class="lv">Core</span></summary><div class="a">
+<ol>
+<li>Open the Spark UI: find the slow stage, check skew (max vs median task), spill, shuffle read, GC.</li>
+<li>Read less: columnar format, partition pruning, select only needed columns, filter early.</li>
+<li>Shuffle less: broadcast small tables, avoid unnecessary <code>distinct</code>/<code>orderBy</code>/<code>groupBy</code>, pre-aggregate before join.</li>
+<li>Fix skew: AQE, salting, separate hot keys.</li>
+<li>Right-size partitions (128 to 256 MB), compact small files.</li>
+<li>Replace Python UDFs with built-ins or pandas UDFs.</li>
+<li>Cache only reused data. Enable AQE. Use Delta OPTIMIZE and Z-ORDER on filter columns.</li>
+</ol>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Broadcast variable vs accumulator. groupByKey vs reduceByKey</span><span class="lv">Core</span></summary><div class="a">
+<p><b>Broadcast variable:</b> read-only value cached on every executor (lookup dictionaries). <b>Accumulator:</b> write-only from tasks, read on driver (counters). Accumulator updates inside transformations can be double counted on retries, only trust them in actions.</p>
+<p><b>reduceByKey</b> combines locally on each partition before the shuffle. <b>groupByKey</b> shuffles every value, so it's heavier and can OOM. Use DataFrame <code>groupBy().agg()</code> which does partial aggregation automatically.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Idempotent overwrite of one partition (daily reload)</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
+df.write.mode("overwrite").partitionBy("load_date").parquet(path)   # only touched partitions replaced
+
+# Delta: replaceWhere
+(df.write.format("delta").mode("overwrite")
+   .option("replaceWhere", "load_date = '2026-10-14'").save(path))</code></pre>
+<p>Rerunning the same day gives the same result, no duplicates.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Delta Lake and streaming</h3>
+<details class="q" data-lvl="core"><summary><span class="t">What does Delta Lake give you over plain Parquet?</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>ACID</b> via a transaction log (<code>_delta_log</code>). Readers never see half-written data.</li>
+<li><b>MERGE/UPDATE/DELETE</b>, <b>time travel</b> (<code>VERSION AS OF</code>, <code>TIMESTAMP AS OF</code>), <b>schema enforcement</b> and evolution, <b>Change Data Feed</b>.</li>
+<li><b>OPTIMIZE</b> compacts small files, <b>ZORDER BY</b> co-locates data for filter columns, <b>VACUUM</b> deletes old files (default retention 7 days).</li>
+</ul>
+<pre><code>spark.sql("DESCRIBE HISTORY gold.dim_customer")
+spark.sql("SELECT * FROM gold.dim_customer VERSION AS OF 12")
+spark.sql("OPTIMIZE gold.fact_sales ZORDER BY (customer_id)")
+spark.sql("VACUUM gold.fact_sales RETAIN 168 HOURS")
+spark.sql("RESTORE TABLE gold.fact_sales TO VERSION AS OF 12")</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Structured Streaming: checkpoint, watermark, output modes, Auto Loader</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Checkpoint</b> stores offsets and state so the query resumes after failure. Never share a checkpoint between queries.</li>
+<li><b>Watermark</b> says how late data may arrive; Spark drops state older than that. Needed for windowed aggregations and stream-stream joins.</li>
+<li><b>Output modes:</b> append, update, complete. <b>Triggers:</b> processingTime, availableNow (batch-style incremental run), continuous.</li>
+<li><b>Exactly-once:</b> replayable source + checkpoint + idempotent sink (Delta). <code>foreachBatch</code> lets you run MERGE per micro-batch.</li>
+<li><b>Auto Loader</b> (<code>cloudFiles</code>) incrementally ingests new files from cloud storage with schema inference and evolution.</li>
+</ul>
+<pre><code>(spark.readStream.format("cloudFiles")
+  .option("cloudFiles.format", "json")
+  .option("cloudFiles.schemaLocation", "/chk/schema")
+  .load("/mnt/raw/events")
+  .withWatermark("event_ts", "10 minutes")
+  .groupBy(F.window("event_ts", "5 minutes"), "device").count()
+  .writeStream.format("delta").outputMode("append")
+  .option("checkpointLocation", "/chk/events").trigger(availableNow=True)
+  .toTable("silver.event_counts"))</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Medallion architecture (bronze, silver, gold)</span><span class="lv">Core</span></summary><div class="a">
+<p><b>Bronze:</b> raw, as received, append-only, with ingestion metadata (load time, source file). <b>Silver:</b> cleaned, deduplicated, typed, conformed, joined. <b>Gold:</b> business-ready aggregates and star-schema marts for BI. Benefits: replay from bronze, clear quality layers, easier debugging.</p>
+<button class="mark">Mark as revised</button></div></details>
+</section>
+
+<!-- ============ DATABRICKS ============ -->
+<section class="panel" id="p-dbx" hidden>
+<h2>Databricks</h2>
+<p class="lead">For 5 years of experience, interviewers assume you used Databricks daily. They test the platform pieces around Spark: clusters, Delta internals, Unity Catalog, ingestion, jobs, CI/CD and cost. Product names change often, so say the concept first and the current feature name second.</p>
+
+<h3>Platform and compute</h3>
+<details class="q" data-lvl="core"><summary><span class="t">Explain Databricks architecture: control plane vs data plane</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Control plane</b> lives in Databricks' account: web UI, notebooks, job scheduler, cluster manager, metadata.</li>
+<li><b>Data plane</b> is where compute runs. For classic compute it is in <i>your</i> Azure subscription and VNet, so your data stays in your storage (ADLS). Serverless compute runs in Databricks' account instead.</li>
+<li>A <b>workspace</b> is the environment for notebooks, jobs and clusters. Unity Catalog sits above workspaces at account level.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">All-purpose vs job clusters, pools, SQL warehouses, serverless</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>All-purpose cluster:</b> interactive development, shared by people, stays up until auto-terminate. Costs more per DBU.</li>
+<li><b>Job cluster:</b> created for a job run and terminated after. Cheaper, isolated, the right choice for production.</li>
+<li><b>Pools:</b> pre-warmed idle instances that cut cluster start time.</li>
+<li><b>SQL warehouse:</b> compute for SQL and BI (classic, pro, serverless).</li>
+<li><b>Serverless compute:</b> no cluster management, fast start, billed on use.</li>
+<li><b>Settings to mention:</b> autoscaling min/max workers, auto-termination minutes, spot instances for workers with an on-demand driver, cluster policies to cap size and cost, init scripts and libraries.</li>
+<li><b>Access modes:</b> single user (dedicated) and shared (standard) are the Unity Catalog modes.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Photon, disk cache, and what actually speeds things up on Databricks</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Photon:</b> native vectorized engine, speeds up SQL and DataFrame operations (scans, joins, aggregations, Delta writes) without code changes. Costs more DBUs, pays off on heavy scans.</li>
+<li><b>Disk (IO) cache:</b> caches remote Parquet/Delta files on local NVMe of workers. Different from <code>df.cache()</code>.</li>
+<li>Delta file layout: <code>OPTIMIZE</code>, liquid clustering or ZORDER, optimized writes and auto compaction, data skipping stats.</li>
+<li>Plus everything from the PySpark tab: AQE, broadcast, skew handling.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Delta Lake on Databricks</h3>
+<details class="q" data-lvl="hard"><summary><span class="t">How does Delta work internally? Concurrency and conflicts</span><span class="lv hard">Hard</span></summary><div class="a">
+<ul>
+<li>A Delta table is Parquet data files plus a <code>_delta_log</code> folder. Each commit is a JSON file of actions (add file, remove file, metadata). A Parquet <b>checkpoint</b> is written every 10 commits so readers don't replay the whole log. File-level statistics (min/max) in the log enable <b>data skipping</b>.</li>
+<li><b>Optimistic concurrency:</b> writers assume no conflict, then check at commit. If another commit touched the same files, you get an error such as <code>ConcurrentAppendException</code> or <code>ConcurrentDeleteReadException</code>.</li>
+<li>Default isolation is <b>WriteSerializable</b>. Appends to different partitions rarely conflict.</li>
+<li><b>Avoid conflicts:</b> make partitions or clustering keys disjoint across writers, put the partition predicate in the MERGE <code>ON</code> clause, retry on failure, avoid two jobs rewriting the same table at once.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">OPTIMIZE, ZORDER, partitioning and liquid clustering. How do you lay out a table?</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>OPTIMIZE</b> compacts many small files into larger ones (target around 1 GB). <b>ZORDER BY</b> co-locates rows for up to a few high-cardinality filter columns to improve skipping.</li>
+<li><b>Partitioning</b> only helps for big tables (roughly over 1 TB) with a low-cardinality filter column, and each partition should hold at least about 1 GB. Otherwise you create small files.</li>
+<li><b>Liquid clustering</b> (<code>CLUSTER BY (col)</code>) replaces partitioning and ZORDER for new tables, handles skew, and lets you change keys without rewriting everything.</li>
+<li><b>Optimized writes and auto compaction</b> reduce small files at write time. <b>Predictive optimization</b> runs OPTIMIZE and VACUUM automatically on Unity Catalog managed tables.</li>
+</ul>
+<pre><code>CREATE TABLE main.gold.fact_sales (...) CLUSTER BY (customer_id, sale_date);
+OPTIMIZE main.gold.fact_sales;</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">MERGE is slow. How do you tune it?</span><span class="lv hard">Hard</span></summary><div class="a">
+<ol>
+<li><b>Prune the target:</b> add a predicate on the partition or clustering column in <code>ON</code>, e.g. <code>t.sale_date &gt;= current_date() - 7</code>, so it doesn't scan the whole table.</li>
+<li><b>Dedupe the source</b> by key first. Duplicates cause errors and extra work.</li>
+<li><b>Shrink the source:</b> filter to just changed rows, avoid merging a full snapshot.</li>
+<li>Compact small files, cluster the target on the merge key, use broadcast if the source is small.</li>
+<li>Use newer features: deletion vectors and low-shuffle merge (enabled by default on recent runtimes) rewrite fewer files.</li>
+</ol>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Time travel, RESTORE, VACUUM, CLONE (shallow vs deep)</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Time travel:</b> <code>VERSION AS OF n</code> or <code>TIMESTAMP AS OF</code>. <b>RESTORE</b> rolls the table back to a version.</li>
+<li><b>Retention:</b> log history is kept 30 days by default, and <b>VACUUM</b> deletes unreferenced data files older than 7 days by default. After vacuum you cannot time travel to versions that needed those files.</li>
+<li><b>Shallow clone</b> copies only metadata and points to the source files (fast, good for testing). <b>Deep clone</b> copies data too (backups, migration).</li>
+</ul>
+<pre><code>CREATE TABLE main.dev.orders SHALLOW CLONE main.prod.orders;
+CREATE TABLE main.backup.orders DEEP CLONE main.prod.orders;
+RESTORE TABLE main.prod.orders TO VERSION AS OF 42;</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Schema enforcement vs schema evolution in Delta</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Enforcement (default):</b> a write with extra or mismatched columns fails. This protects table quality.</li>
+<li><b>Evolution:</b> <code>.option("mergeSchema","true")</code> on write adds new columns. For MERGE set <code>spark.databricks.delta.schema.autoMerge.enabled=true</code>. <code>overwriteSchema</code> replaces the schema on overwrite.</li>
+<li>Renaming or dropping columns needs <b>column mapping</b> enabled on the table.</li>
+<li>Also: <code>CHECK</code> constraints, <code>NOT NULL</code>, generated columns.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Unity Catalog, storage and security</h3>
+<details class="q" data-lvl="core"><summary><span class="t">What is Unity Catalog? Its object hierarchy</span><span class="lv">Core</span></summary><div class="a">
+<p>Unity Catalog (UC) is the central governance layer across workspaces: access control, auditing, lineage, data discovery.</p>
+<p><b>Hierarchy:</b> metastore → catalog → schema → tables, views, volumes, functions, models. Tables are addressed as <code>catalog.schema.table</code>.</p>
+<ul>
+<li>Permissions with <code>GRANT SELECT ON TABLE ... TO group</code>, inherited downward. Grant to groups, not users.</li>
+<li><b>Row filters</b> and <b>column masks</b> for fine-grained security. <b>Lineage</b> down to column level. <b>System tables</b> for audit and billing.</li>
+<li><b>Storage credential</b> (an identity such as a managed identity or service principal) + <b>external location</b> (a storage path bound to that credential) control access to cloud storage.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Managed vs external tables. Hive metastore vs Unity Catalog</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Managed table:</b> Databricks controls the storage location. <code>DROP TABLE</code> removes the metadata and the data (UC keeps dropped managed tables recoverable for a period via UNDROP).</li>
+<li><b>External table:</b> you specify <code>LOCATION</code> on your storage. <code>DROP</code> removes only metadata, data stays.</li>
+<li><b>Volumes</b> govern non-tabular files (CSV, images, JSON) in UC.</li>
+<li><b>Hive metastore</b> is the legacy per-workspace metastore with two-level names and weak governance. Migration: upgrade tables to UC (SYNC for external, deep clone or CTAS for managed).</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">How do you connect Databricks to ADLS Gen2?</span><span class="lv">Core</span></summary><div class="a">
+<ol>
+<li><b>Unity Catalog external locations</b> with a managed identity credential. Recommended, no secrets in code.</li>
+<li><b>Service principal with OAuth</b> set in Spark config, secret read from a Key Vault-backed secret scope.</li>
+<li><b>Mounts</b> (<code>dbutils.fs.mount</code>) are legacy, not recommended with UC.</li>
+<li>Account keys or SAS tokens are the weakest option.</li>
+</ol>
+<pre><code>acct, tenant = "mystorage", "&lt;tenant-id&gt;"
+suffix = f"{acct}.dfs.core.windows.net"
+spark.conf.set(f"fs.azure.account.auth.type.{suffix}", "OAuth")
+spark.conf.set(f"fs.azure.account.oauth.provider.type.{suffix}",
+               "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider")
+spark.conf.set(f"fs.azure.account.oauth2.client.id.{suffix}", dbutils.secrets.get("kv-scope", "sp-client-id"))
+spark.conf.set(f"fs.azure.account.oauth2.client.secret.{suffix}", dbutils.secrets.get("kv-scope", "sp-secret"))
+spark.conf.set(f"fs.azure.account.oauth2.client.endpoint.{suffix}",
+               f"https://login.microsoftonline.com/{tenant}/oauth2/token")
+df = spark.read.format("delta").load(f"abfss://bronze@{suffix}/orders")</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Secrets, widgets and dbutils you should know</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Secret scope</b> backed by Azure Key Vault. <code>dbutils.secrets.get(scope, key)</code>. Values are redacted in notebook output.</li>
+<li><b>Widgets</b> are notebook parameters: <code>dbutils.widgets.text("run_date","")</code> then <code>dbutils.widgets.get("run_date")</code>. ADF and Jobs pass values to them.</li>
+<li><code>dbutils.fs.ls/cp/mv/rm</code>, <code>dbutils.notebook.run(path, timeout, args)</code>, <code>dbutils.notebook.exit(value)</code>, <code>dbutils.jobs.taskValues</code> to pass values between job tasks.</li>
+<li><code>%run</code> includes another notebook in the same context (shares variables). <code>dbutils.notebook.run</code> starts a separate run with its own context and returns the exit value.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Ingestion and pipelines</h3>
+<details class="q" data-lvl="core"><summary><span class="t">Auto Loader vs COPY INTO. How does Auto Loader work?</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Auto Loader</b> (<code>cloudFiles</code>) is a streaming source that incrementally discovers new files in cloud storage, tracks processed files in the checkpoint (RocksDB), and scales to millions of files. <b>COPY INTO</b> is an idempotent SQL batch command, simpler, fine for thousands of files.</li>
+<li><b>File discovery:</b> directory listing (default, simple) or file notification (Event Grid + queue, more scalable).</li>
+<li><b>Schema evolution modes:</b> <code>addNewColumns</code> (default, stream fails once then picks up new columns on restart), <code>rescue</code> (unexpected data goes to <code>_rescued_data</code>), <code>failOnNewColumns</code>, <code>none</code>.</li>
+<li>Run as a continuous stream or as an incremental batch with <code>trigger(availableNow=True)</code>.</li>
+</ul>
+<pre><code>from pyspark.sql import functions as F
+(spark.readStream.format("cloudFiles")
+  .option("cloudFiles.format", "json")
+  .option("cloudFiles.schemaLocation", "/Volumes/main/bronze/_schemas/orders")
+  .option("cloudFiles.schemaEvolutionMode", "addNewColumns")
+  .load("abfss://landing@mystorage.dfs.core.windows.net/orders/")
+  .withColumn("_ingest_ts", F.current_timestamp())
+  .withColumn("_src_file", F.col("_metadata.file_path"))
+  .writeStream
+  .option("checkpointLocation", "/Volumes/main/bronze/_chk/orders")
+  .option("mergeSchema", "true")
+  .trigger(availableNow=True)
+  .toTable("main.bronze.orders"))</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Streaming upsert into Delta with foreachBatch (incremental bronze to silver)</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>from delta.tables import DeltaTable
+from pyspark.sql import Window, functions as F
+
+def upsert(batch_df, batch_id):
+    w = Window.partitionBy("id").orderBy(F.col("updated_at").desc())
+    latest = batch_df.withColumn("rn", F.row_number().over(w)).filter("rn = 1").drop("rn")
+    (DeltaTable.forName(spark, "main.silver.orders").alias("t")
+       .merge(latest.alias("s"), "t.id = s.id")
+       .whenMatchedUpdateAll(condition="s.updated_at &gt; t.updated_at")
+       .whenNotMatchedInsertAll().execute())
+
+(spark.readStream.table("main.bronze.orders")
+   .writeStream.foreachBatch(upsert)
+   .option("checkpointLocation", "/Volumes/main/silver/_chk/orders")
+   .trigger(availableNow=True).start())</code></pre>
+<p>Checkpoint gives restartability, dedupe plus the timestamp condition makes the merge idempotent if a batch is replayed.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Delta Live Tables / declarative pipelines: expectations and APPLY CHANGES (CDC, SCD2)</span><span class="lv hard">Hard</span></summary><div class="a">
+<p>DLT (being rebranded as Lakeflow Declarative Pipelines) is declarative: you define tables and queries, the platform handles orchestration, dependencies, retries, scaling and lineage.</p>
+<ul>
+<li><b>Streaming tables</b> process append-only sources incrementally. <b>Materialized views</b> are refreshed query results.</li>
+<li><b>Expectations</b> are data quality rules: <code>expect</code> (log violations), <code>expect_or_drop</code> (drop bad rows), <code>expect_or_fail</code> (fail the update). Metrics land in the event log.</li>
+<li><b>APPLY CHANGES</b> handles CDC feeds and out-of-order events using a sequence column, and can maintain SCD type 1 or 2 automatically (newer releases call this AUTO CDC).</li>
+</ul>
+<pre><code>import dlt
+from pyspark.sql import functions as F
+
+@dlt.table
+@dlt.expect_or_drop("valid_id", "customer_id IS NOT NULL")
+def customer_cdc():
+    return (spark.readStream.format("cloudFiles")
+            .option("cloudFiles.format", "json").load("/Volumes/main/landing/customer_cdc"))
+
+dlt.create_streaming_table("dim_customer")
+dlt.apply_changes(
+    target="dim_customer", source="customer_cdc",
+    keys=["customer_id"], sequence_by="commit_ts",
+    apply_as_deletes=F.expr("op = 'D'"),
+    stored_as_scd_type=2)</code></pre>
+<p>The interview point: this replaces the hand-written SCD2 MERGE from the SCD tab, and it handles late and out-of-order events for you.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Databricks Workflows (Jobs): features you should know</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li>A <b>job</b> has multiple <b>tasks</b> (notebook, Python wheel, SQL, DLT pipeline, dbt, JAR) with dependencies forming a DAG.</li>
+<li>Tasks can share one <b>job cluster</b> to save start time and cost.</li>
+<li>Task <b>retries</b>, timeouts, <b>parameters</b>, <b>task values</b> between tasks, <b>conditional (if/else)</b> and <b>for each</b> tasks.</li>
+<li><b>Triggers:</b> schedule (cron), file arrival, continuous, API.</li>
+<li><b>Repair run</b> reruns only failed tasks and their dependents. Email, Slack or webhook alerts on failure.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">ADF orchestrating Databricks. How do the two work together?</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li>ADF <b>Databricks Notebook activity</b> runs a notebook. Linked service auth: access token (store in Key Vault) or managed identity, targeting a new job cluster, an existing cluster or a pool.</li>
+<li>Pass values with <b>base parameters</b>, which appear as widgets: <code>run_date = @formatDateTime(pipeline().TriggerTime,'yyyy-MM-dd')</code>.</li>
+<li>Return values: the notebook ends with <code>dbutils.notebook.exit(json.dumps({"rows": n}))</code>, ADF reads <code>@activity('NB').output.runOutput</code>.</li>
+<li>A common split: ADF for ingestion from many sources and cross-system orchestration, Databricks for transformation. If everything is inside Databricks, Workflows can replace ADF for orchestration. Say why you chose what you chose.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Operations, CI/CD, cost</h3>
+<details class="q" data-lvl="hard"><summary><span class="t">CI/CD for Databricks code</span><span class="lv hard">Hard</span></summary><div class="a">
+<ol>
+<li><b>Git folders (Repos)</b> connect workspace to Azure DevOps or GitHub. Develop on a branch, PR to main.</li>
+<li>Prefer packaging reusable logic as Python modules or a <b>wheel</b> with unit tests (<code>pytest</code>, local Spark or Databricks Connect) over logic buried in notebooks.</li>
+<li><b>Databricks Asset Bundles</b> (<code>databricks.yml</code>) define jobs, pipelines and clusters as code with dev, test and prod targets. The pipeline runs <code>databricks bundle validate</code> then <code>deploy -t prod</code>.</li>
+<li>Service principals for deployment, secrets from Key Vault or pipeline variables, environment config through bundle variables.</li>
+</ol>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">How do you reduce Databricks cost?</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li>Job clusters (not all-purpose) for production, short auto-termination on interactive clusters.</li>
+<li>Right-size nodes and use autoscaling. Use spot instances for fault-tolerant workers. Pools for faster start.</li>
+<li>Cluster policies to cap size and enforce tags. Tags for cost attribution per team.</li>
+<li>Fix inefficient jobs: avoid full reloads, incremental processing, compact small files, Photon when scans dominate.</li>
+<li>Serverless for spiky workloads, <code>availableNow</code> triggers instead of 24/7 streams when latency allows. Monitor with system billing tables.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">A Databricks job fails or is slow. How do you debug?</span><span class="lv hard">Hard</span></summary><div class="a">
+<ol>
+<li>Open the failed run: which task, the error, the cell. Check <b>driver logs</b> and <b>stderr</b>.</li>
+<li><b>Spark UI:</b> stage with the longest time, skewed tasks, spill to disk, shuffle size, GC time. Check the SQL/DataFrame tab for the plan.</li>
+<li><b>Cluster metrics:</b> CPU, memory, network. Was the cluster undersized, or did autoscaling lag?</li>
+<li>Common causes: skewed key, <code>collect()</code> or <code>toPandas()</code> on big data, huge broadcast, small files, many partitions, a UDF, wrong cluster type, concurrent write conflict, expired token or secret, schema change upstream.</li>
+<li>Fix, rerun with <b>repair run</b>, add alerting and a data check so it fails early next time.</li>
+</ol>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Lakehouse vs data warehouse vs data lake</span><span class="lv">Core</span></summary><div class="a">
+<p><b>Data lake:</b> cheap files in object storage, flexible, but no ACID, weak governance. <b>Warehouse:</b> structured, fast SQL, ACID, but costly and less suited to raw or unstructured data and ML. <b>Lakehouse:</b> open files plus a transaction layer (Delta) on the lake, giving ACID, governance (Unity Catalog), BI and ML on one copy of data.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Say these things about your Databricks experience (checklist)</span><span class="lv">Core</span></summary><div class="a">
+<p>Prepare one concrete sentence with a number for each, based on your real work:</p>
+<ul>
+<li>Which cluster types you used, how you sized them, and one cost or runtime improvement you made.</li>
+<li>How you ingested data (Auto Loader, ADF Copy, JDBC) and the bronze, silver, gold layout you followed.</li>
+<li>One Delta feature you used and why: MERGE for upserts, OPTIMIZE and ZORDER, time travel for a fix, Change Data Feed.</li>
+<li>How you handled SCD2 or CDC in Databricks.</li>
+<li>How you scheduled and monitored jobs (ADF triggering notebooks, or Workflows), and how failures were handled.</li>
+<li>Governance: Unity Catalog or table ACLs, secret scopes, how you handled PII.</li>
+<li>One performance problem you debugged with the Spark UI and what you changed.</li>
+<li>How code moved from dev to prod (Git folders, DevOps pipeline, bundles).</li>
+</ul>
+<p>If you have not used something, say so and explain how you would do it. Honest and reasoned beats bluffing.</p>
+<button class="mark">Mark as revised</button></div></details>
+</section>
+
+<!-- ============ ADF ============ -->
+<section class="panel" id="p-adf" hidden>
+<h2>Azure Data Factory</h2>
+<p class="lead">ADF is the orchestrator and mover. Heavy transformation usually runs in Databricks or data flows. Be ready to describe the patterns you built, not only the components.</p>
+
+<h3>Core concepts</h3>
+<details class="q" data-lvl="core"><summary><span class="t">Explain ADF components</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Pipeline:</b> logical group of activities. <b>Activity:</b> a step (Copy, Lookup, Databricks Notebook, Stored Procedure, Web, ForEach, If, ...).</li>
+<li><b>Linked service:</b> connection to a store or compute (like a connection string). <b>Dataset:</b> named view of data (table, folder, file) inside a linked service.</li>
+<li><b>Integration Runtime (IR):</b> the compute that runs copy, data flow and dispatch activities.</li>
+<li><b>Trigger:</b> what starts a pipeline. <b>Parameters, variables, expressions:</b> make pipelines dynamic.</li>
+<li><b>Mapping data flow:</b> visual Spark-based transformations.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Types of Integration Runtime</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Azure IR:</b> fully managed, public cloud sources, runs data flows. Can use managed VNet.</li>
+<li><b>Self-hosted IR:</b> installed on a VM or on-prem machine to reach private networks and on-prem databases. Can be shared across factories, scaled with multiple nodes for HA.</li>
+<li><b>Azure-SSIS IR:</b> lift and shift of SSIS packages.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Trigger types. Tumbling window vs schedule trigger</span><span class="lv">Core</span></summary><div class="a">
+<div class="tbl"><table>
+<tr><th></th><th>Schedule</th><th>Tumbling window</th></tr>
+<tr><td>Windows</td><td>Fires at clock times, no window concept</td><td>Fixed-size, non-overlapping, contiguous windows</td></tr>
+<tr><td>Backfill</td><td>No (only future runs)</td><td>Yes, can run past windows</td></tr>
+<tr><td>State</td><td>Stateless</td><td>Keeps state per window, retry policy, dependencies on other windows or triggers</td></tr>
+<tr><td>Pipelines</td><td>Many to many</td><td>One to one</td></tr>
+<tr><td>Window params</td><td>None</td><td><code>@trigger().outputs.windowStartTime / windowEndTime</code></td></tr>
+</table></div>
+<p>Other triggers: <b>Event-based</b> (blob created/deleted, via Event Grid, the provider must be registered), <b>Custom event</b>, and <b>manual/debug</b>. Use tumbling window for incremental loads that must not skip or overlap.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Parameters vs variables vs global parameters</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Pipeline parameter:</b> passed in at run time, read-only inside. <code>@pipeline().parameters.name</code></li>
+<li><b>Variable:</b> set and changed inside the pipeline with Set Variable / Append Variable. <code>@variables('v')</code>. Set Variable inside a parallel ForEach is unsafe (race).</li>
+<li><b>Global parameter:</b> factory-wide constants (environment name, storage URL), overridden per environment in CI/CD. <code>@pipeline().globalParameters.env</code></li>
+<li><b>Dataset/linked service parameters:</b> parameterize one dataset to serve many tables or files.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Patterns you must know</h3>
+<details class="q" data-lvl="hard"><summary><span class="t">Incremental load with a watermark column</span><span class="lv hard">Hard</span></summary><div class="a">
+<ol>
+<li><b>Lookup</b> old watermark from a control table (<code>SELECT last_value FROM watermark WHERE table_name='orders'</code>).</li>
+<li><b>Lookup</b> new watermark: <code>SELECT MAX(modified_date) AS nv FROM orders</code>.</li>
+<li><b>Copy</b> with a source query between the two values.</li>
+<li><b>Stored procedure</b> updates the watermark to the new value, only after the copy succeeds.</li>
+</ol>
+<pre><code>-- Copy source query (dynamic content)
+@concat('SELECT * FROM dbo.orders WHERE modified_date &gt; ''',
+        activity('LookupOld').output.firstRow.last_value,
+        ''' AND modified_date &lt;= ''',
+        activity('LookupNew').output.firstRow.nv, '''')</code></pre>
+<p><b>Limits to mention:</b> misses hard deletes, needs a reliable modified column, and late updates with older timestamps are lost. Take the new watermark before copying so rows written during the copy aren't skipped. That's why CDC exists, see the SCD &amp; CDC tab.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Metadata-driven pipeline: copy 100 tables with one pipeline</span><span class="lv hard">Hard</span></summary><div class="a">
+<ol>
+<li>A control table lists each source: schema, table, target path, load type (full/incremental), watermark column, active flag.</li>
+<li><b>Lookup</b> reads active rows (mind the 5000 row and 4 MB limit).</li>
+<li><b>ForEach</b> over <code>@activity('GetConfig').output.value</code>, with batch count for parallelism.</li>
+<li>Inside: <b>If</b>/<b>Switch</b> on load type, then Copy with a parameterized dataset: <code>@item().table_name</code>.</li>
+<li>Log success or failure per table to an audit table via Stored Procedure.</li>
+</ol>
+<p>Why: adding a table is a row insert, not a new pipeline. Easier to maintain and promote across environments.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">ForEach details: sequential vs parallel, limits, nesting</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li>Sequential (one at a time) or parallel with <b>Batch count</b> (default 20, max 50).</li>
+<li>ForEach cannot be nested inside ForEach. Workaround: call a child pipeline with <b>Execute Pipeline</b> that has its own ForEach.</li>
+<li>Items come from an array: Lookup output <code>.value</code>, Get Metadata <code>childItems</code>, or a parameter.</li>
+<li>Inside, use <code>@item()</code> and <code>@item().column</code>.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Error handling, retries, alerts, logging</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Activity retry</b> and retry interval, plus timeout, in activity settings.</li>
+<li><b>Dependency conditions:</b> On Success, On Failure, On Completion, On Skip. A failure path can write to an error log and send an alert, so the pipeline continues or fails deliberately.</li>
+<li>Pipeline status follows the <i>last</i> evaluated path. If you handle a failure with an On Failure branch, the pipeline may show Succeeded. Add a Fail activity if you want the run to be marked failed.</li>
+<li>Error text: <code>@activity('Copy1').error.message</code>. Row counts: <code>@activity('Copy1').output.rowsCopied</code>.</li>
+<li><b>Monitoring:</b> Monitor tab, Azure Monitor alerts on failed runs, Log Analytics for history beyond 45 days. Custom audit table for run id, table, rows, status, duration.</li>
+<li><b>Rerun from failed activity</b> in Monitor to avoid redoing completed steps (loads must be idempotent).</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Copy activity: performance tuning and fault tolerance</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>DIUs</b> (data integration units) for Azure IR, <b>parallel copies</b>, and source partition options (physical or dynamic range on a numeric/date column) for big tables.</li>
+<li>Use <b>staging</b> with PolyBase or COPY into Synapse. Prefer Parquet over CSV.</li>
+<li>Self-hosted IR: add nodes, check network and machine CPU.</li>
+<li><b>Fault tolerance:</b> skip incompatible rows and log them to a storage account.</li>
+<li>Copy has no transformation, only mapping. Use data flow or Databricks when you need logic.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Common activities and when to use each</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Lookup:</b> read a small result set or single value (config, watermark). <b>Get Metadata:</b> list files, check existence, size, last modified.</li>
+<li><b>Validation:</b> wait until a file or folder exists. <b>Until:</b> loop until a condition. <b>Wait:</b> pause.</li>
+<li><b>If Condition / Switch:</b> branching. <b>Execute Pipeline:</b> modular parent-child design, can pass parameters and wait for completion.</li>
+<li><b>Web / Webhook:</b> call REST APIs (e.g. Logic App for email). <b>Stored Procedure / Script:</b> run SQL.</li>
+<li><b>Databricks Notebook/Jar/Python, Azure Function, Synapse:</b> external compute.</li>
+<li><b>Delete:</b> clean up files. <b>Fail:</b> raise a custom error.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Mapping data flows vs Databricks. When do you choose which?</span><span class="lv">Core</span></summary><div class="a">
+<p>Data flows are low-code Spark, good for standard joins, aggregates, SCD patterns and when the team prefers visual design. Cluster start takes a few minutes (set TTL on the IR to reuse). Databricks suits complex logic, large volumes, ML, Delta features, and code reviewed in Git. A common design: ADF orchestrates, Copy lands raw data, Databricks notebooks transform.</p>
+<p>Data flow transformations to name: Source, Select, Derived Column, Filter, Join, Exists, Lookup, Conditional Split, Aggregate, Window, Surrogate Key, Pivot/Unpivot, Alter Row, Sink. <b>Schema drift</b> handling lets flows process columns not defined at design time.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Security, CI/CD, cost</h3>
+<details class="q" data-lvl="core"><summary><span class="t">Security: secrets, identities, networking</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li>Store passwords and keys in <b>Azure Key Vault</b>, reference them from linked services. Don't hardcode.</li>
+<li>Prefer <b>managed identity</b> of the factory (grant RBAC on storage, Key Vault, SQL) over keys.</li>
+<li>Network: managed VNet IR and private endpoints, self-hosted IR for on-prem.</li>
+<li>RBAC roles on the factory (Data Factory Contributor), separate dev and prod.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">CI/CD for ADF</span><span class="lv hard">Hard</span></summary><div class="a">
+<ol>
+<li>Dev factory connected to Git (Azure DevOps or GitHub). Work in feature branches, PR to <code>main</code> (collaboration branch).</li>
+<li><b>Publish</b> from main generates ARM templates in the <code>adf_publish</code> branch.</li>
+<li>Release pipeline deploys the ARM template to test and prod, with a <b>parameter file per environment</b> (linked service URLs, Key Vault names, global parameters).</li>
+<li>Stop active triggers before deployment and restart afterward with the pre and post deployment PowerShell script, so running triggers aren't broken.</li>
+<li>Newer approach: automated publish with the <code>@microsoft/azure-data-factory-utilities</code> npm package in the build pipeline.</li>
+</ol>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Cost optimization in ADF</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li>Billed per activity run, DIU-hours for copy, and data flow vCore-hours.</li>
+<li>Right-size DIUs, don't leave auto at high values for tiny files. Batch many small files in one copy.</li>
+<li>Set data flow IR TTL to share a warm cluster across flows, but not so long it idles.</li>
+<li>Avoid very chatty pipelines with thousands of Lookup/Set Variable calls. Use incremental loads, not full reloads.</li>
+<li>Use reserved capacity or lower tiers where possible, delete dev resources.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Dynamic content expressions you should be able to write</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>@pipeline().parameters.tableName
+@activity('LookupCfg').output.firstRow.watermark      // single row
+@activity('GetCfg').output.value                       // array for ForEach
+@item().sourceTable
+@concat('raw/', formatDateTime(utcnow(), 'yyyy/MM/dd'), '/')
+@formatDateTime(addDays(utcnow(), -1), 'yyyy-MM-dd')
+@pipeline().TriggerTime     @pipeline().RunId     @pipeline().Pipeline
+@trigger().outputs.windowStartTime
+@if(equals(item().loadType, 'FULL'), 'a', 'b')
+@coalesce(pipeline().parameters.p, 'default')
+@equals(activity('Copy1').output.rowsCopied, 0)
+@activity('Copy1').error.message</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Other frequent ADF questions, short answers</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Lookup limit?</b> 5000 rows, 4 MB output. For more, use Copy to a file and read in Databricks, or paginate.</li>
+<li><b>Pass data between pipelines?</b> Parameters on Execute Pipeline. Return values via Set Variable in a pipeline return value pattern, or write to a table.</li>
+<li><b>Run on file arrival?</b> Event-based trigger on Blob Created with path filters.</li>
+<li><b>Copy only new files?</b> Filter by last modified between window start and end in Copy source, or Get Metadata + ForEach, or event trigger.</li>
+<li><b>Schema change in source?</b> Schema drift in data flow, or Delta schema evolution (mergeSchema), alert on column mismatch.</li>
+<li><b>Reprocess a past day?</b> Tumbling window rerun, or manual run with a date parameter. Needs idempotent load.</li>
+<li><b>Self-hosted IR down?</b> Add a second node for high availability.</li>
+<li><b>Pipeline for on-prem SQL to ADLS?</b> Self-hosted IR + Copy + Parquet sink + managed identity to storage.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+</section>
+
+<!-- ============ CI/CD ============ -->
+<section class="panel" id="p-cicd" hidden>
+<h2>CI/CD for data engineering</h2>
+<p class="lead">Your CV lists Jenkins, GitHub and CI/CD pipelines, so expect a full round on this. Pipeline files below are working examples to adapt. Hosts, names and versions are placeholders, so check them against your own setup.</p>
+
+<h3>Concepts</h3>
+<details class="q" data-lvl="core"><summary><span class="t">CI vs continuous delivery vs continuous deployment. Why is it different for data projects?</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>CI:</b> every merge is built and tested automatically (lint, unit tests, validation).</li>
+<li><b>Continuous delivery:</b> every good build is deployable at any time, usually with a manual approval before prod.</li>
+<li><b>Continuous deployment:</b> every passing change goes to prod automatically.</li>
+<li><b>Why data is harder:</b> besides code you have <b>state</b> (tables, history, schemas) that you can't simply redeploy. Tests need realistic data. Deployments must be <b>idempotent</b> and schema changes must be backward compatible. Jobs may be running while you deploy (stop triggers first).</li>
+<li>Principle: <b>build once, deploy the same artifact</b> to dev, test and prod, changing only configuration.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Describe the stages of a good data pipeline release</span><span class="lv">Core</span></summary><div class="a">
+<ol>
+<li><b>Pull request checks:</b> lint, formatting, unit tests, secret scan, bundle or ARM validation.</li>
+<li><b>Build:</b> package the wheel or notebooks, export ADF ARM templates, tag the version.</li>
+<li><b>Deploy to dev</b> automatically on merge, run integration tests on sample data.</li>
+<li><b>Deploy to test/UAT</b> and run a data-quality or regression suite.</li>
+<li><b>Approval gate</b> (reviewer sign-off) for prod.</li>
+<li><b>Deploy to prod:</b> stop triggers, deploy, restart triggers.</li>
+<li><b>Smoke test</b> (a small run, row counts, freshness check), then notify the team.</li>
+<li><b>Rollback plan</b> ready: previous tag, and Delta RESTORE for data.</li>
+</ol>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Branching strategy and the Git workflow you follow</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Feature branch workflow:</b> branch from main, small commits, open a PR, review, squash or merge, delete the branch. Simple and common.</li>
+<li><b>Trunk-based:</b> very short-lived branches, merge to main many times a day, feature flags hide unfinished work.</li>
+<li><b>GitFlow:</b> develop, release and hotfix branches. Heavier, used when releases are scheduled.</li>
+<li>Protect <code>main</code>: required reviews, required status checks, no direct pushes, <code>CODEOWNERS</code> for sensitive paths.</li>
+<li>ADF's collaboration branch is <code>main</code>, and <code>adf_publish</code> holds the generated ARM templates.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Pipelines as code</h3>
+<details class="q" data-lvl="core"><summary><span class="t">Jenkinsfile for a Databricks project (declarative pipeline)</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>pipeline {
+  agent any
+  environment {
+    DATABRICKS_HOST          = credentials('dbx-host')
+    DATABRICKS_CLIENT_ID     = credentials('dbx-sp-client-id')
+    DATABRICKS_CLIENT_SECRET = credentials('dbx-sp-client-secret')
+  }
+  stages {
+    stage('Lint and unit tests') {
+      steps {
+        sh 'pip install -r requirements-dev.txt'
+        sh 'ruff check src tests'
+        sh 'pytest tests/unit -q --junitxml=report.xml'
+      }
+      post { always { junit 'report.xml' } }
+    }
+    stage('Validate bundle') { steps { sh 'databricks bundle validate -t dev' } }
+    stage('Deploy dev')      { steps { sh 'databricks bundle deploy -t dev' } }
+    stage('Approval') {
+      when { branch 'main' }
+      steps { input message: 'Deploy to prod?', ok: 'Deploy' }
+    }
+    stage('Deploy prod') {
+      when { branch 'main' }
+      steps { sh 'databricks bundle deploy -t prod' }
+    }
+  }
+  post {
+    failure { mail to: 'data-team@example.com',
+                   subject: "Build failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                   body: "${env.BUILD_URL}" }
+  }
+}</code></pre>
+<p>Talking points: credentials come from the Jenkins credential store, <code>input</code> is the approval gate, <code>when</code> restricts prod stages to main, <code>post</code> handles notifications, and <code>junit</code> publishes test results.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">GitHub Actions workflow: test on PR, deploy on merge with approval</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>name: ci-cd
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check src tests
+      - run: pytest tests/unit -q
+
+  deploy-prod:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: prod          # configure required reviewers here = approval gate
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+      DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: databricks/setup-cli@main
+      - run: databricks bundle deploy -t prod</code></pre>
+<p>Concepts: <code>on</code> triggers, <code>needs</code> for job order, <code>environment</code> for approvals and environment-scoped secrets, <code>secrets</code> context. For Azure auth prefer <b>OIDC federated credentials</b> over long-lived client secrets. Pin third-party actions to a version or commit SHA.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Databricks Asset Bundle: define jobs and environments as code</span><span class="lv hard">Hard</span></summary><div class="a">
+<pre><code># databricks.yml
+bundle:
+  name: orders_etl
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-1111111111111111.1.azuredatabricks.net
+  prod:
+    mode: production
+    workspace:
+      host: https://adb-2222222222222222.2.azuredatabricks.net
+    run_as:
+      service_principal_name: "00000000-0000-0000-0000-000000000000"
+
+resources:
+  jobs:
+    orders_daily:
+      name: orders_daily
+      schedule:
+        quartz_cron_expression: "0 0 2 * * ?"
+        timezone_id: Asia/Kolkata
+      job_clusters:
+        - job_cluster_key: main
+          new_cluster:
+            spark_version: 15.4.x-scala2.12
+            node_type_id: Standard_DS3_v2
+            autoscale: { min_workers: 2, max_workers: 6 }
+      tasks:
+        - task_key: bronze_to_silver
+          job_cluster_key: main
+          notebook_task:
+            notebook_path: ./notebooks/bronze_to_silver.py
+        - task_key: silver_to_gold
+          depends_on: [ { task_key: bronze_to_silver } ]
+          job_cluster_key: main
+          notebook_task:
+            notebook_path: ./notebooks/silver_to_gold.py</code></pre>
+<p>Commands: <code>databricks bundle validate</code>, <code>deploy -t dev</code>, <code>run orders_daily -t dev</code>, <code>destroy</code>. Dev mode prefixes resources per developer and pauses schedules, prod mode runs as a service principal. Check the current docs for the spark_version and supported fields.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">ADF CI/CD in Azure DevOps: from Git to prod (with a deployment task)</span><span class="lv hard">Hard</span></summary><div class="a">
+<ol>
+<li>Dev ADF is Git-connected. Developers work in feature branches and merge PRs into <code>main</code>.</li>
+<li><b>Classic flow:</b> click Publish in dev, ADF writes ARM templates (<code>ARMTemplateForFactory.json</code> and parameters file) to the <code>adf_publish</code> branch. The release pipeline picks them up.</li>
+<li><b>Automated flow (recommended):</b> the build pipeline uses the <code>@microsoft/azure-data-factory-utilities</code> npm package to <code>validate</code> and <code>export</code> the ARM template from <code>main</code>, so no manual Publish click. Check Microsoft docs for the exact command arguments.</li>
+<li>Deploy to each environment with an ARM deployment task and a <b>per-environment parameter override</b> (factory name, Key Vault URL, storage endpoints, global parameters).</li>
+<li><b>Stop triggers before</b> deploying and <b>start them after</b> using Microsoft's pre/post deployment PowerShell script, and optionally delete resources removed from dev.</li>
+</ol>
+<pre><code>- task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'svc-conn-prod'
+    subscriptionId: '$(subId)'
+    resourceGroupName: 'rg-data-prod'
+    location: 'Central India'
+    csmFile: '$(Pipeline.Workspace)/adf-arm/ARMTemplateForFactory.json'
+    csmParametersFile: '$(Pipeline.Workspace)/adf-arm/ARMTemplateParametersForFactory.json'
+    overrideParameters: '-factoryName "adf-prod" -KeyVault_properties_typeProperties_baseUrl "https://kv-prod.vault.azure.net/"'
+    deploymentMode: 'Incremental'</code></pre>
+<p>Gotchas: linked service secrets must be Key Vault references, global parameters need to be included in the template, integration runtimes (especially self-hosted) are not recreated per environment, and linked-template size limits can matter for big factories.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Testing and quality gates</h3>
+<details class="q" data-lvl="core"><summary><span class="t">How do you test data pipelines? Show a PySpark unit test</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Unit tests:</b> small, fast tests of pure transformation functions using tiny local DataFrames. Keep logic in importable modules, not buried in notebooks.</li>
+<li><b>Integration tests:</b> run the job in dev against sample data, check outputs and row counts.</li>
+<li><b>Data quality tests:</b> not null, unique keys, referential integrity, accepted values, freshness, volume anomalies.</li>
+<li><b>Schema and contract tests:</b> source schema matches what the pipeline expects.</li>
+<li><b>Regression tests:</b> compare new output to a known-good baseline.</li>
+</ul>
+<pre><code># src/transforms.py
+from pyspark.sql import Window, functions as F
+
+def latest_per_key(df, key, ts):
+    w = Window.partitionBy(key).orderBy(F.col(ts).desc())
+    return df.withColumn("rn", F.row_number().over(w)).filter("rn = 1").drop("rn")
+
+# tests/unit/test_transforms.py
+import pytest
+from pyspark.sql import SparkSession
+from src.transforms import latest_per_key
+
+@pytest.fixture(scope="session")
+def spark():
+    return (SparkSession.builder.master("local[2]").appName("unit")
+            .config("spark.sql.shuffle.partitions", "2").getOrCreate())
+
+def test_latest_per_key(spark):
+    df = spark.createDataFrame(
+        [(1, "old", "2026-01-01"), (1, "new", "2026-02-01"), (2, "x", "2026-01-05")],
+        ["id", "val", "ts"])
+    out = {r.id: r.val for r in latest_per_key(df, "id", "ts").collect()}
+    assert out == {1: "new", 2: "x"}</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Quality gates on pull requests</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li>Linting and formatting (<code>ruff</code> or <code>flake8</code>, <code>black</code>), SQL linting (<code>sqlfluff</code>), type checks optional.</li>
+<li>Unit tests must pass, optional coverage threshold.</li>
+<li>Secret scanning (for example <code>gitleaks</code>) so credentials never reach the repo. Use <code>pre-commit</code> hooks locally too.</li>
+<li>Bundle or ARM template validation.</li>
+<li>Branch protection: at least one reviewer, required status checks, <code>CODEOWNERS</code>, no force-push to main.</li>
+<li>Clear commit and PR conventions, linked ticket id.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Environments, secrets, safety</h3>
+<details class="q" data-lvl="core"><summary><span class="t">Environment promotion and configuration management</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li>Separate dev, test and prod: separate workspaces or factories, resource groups, storage accounts and Key Vaults. Prod access is restricted.</li>
+<li><b>No hardcoded</b> paths, server names or secrets. Use parameters: ADF global parameters and ARM parameter files, Databricks bundle variables or job parameters, widgets.</li>
+<li>Same code artifact in every environment. Differences live only in config.</li>
+<li>Naming convention per environment so mistakes are visible (<code>adf-dev</code>, <code>adf-prod</code>).</li>
+<li>Dev uses small or masked data. Never copy raw PII to lower environments.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Secrets and identity in CI/CD pipelines</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li>Pipelines authenticate as a <b>service principal</b> (or managed identity), not as a person. Give least privilege, scoped per environment.</li>
+<li>Prefer <b>OIDC / workload identity federation</b> (GitHub Actions, Azure DevOps) over client secrets, because there is nothing long-lived to leak. If you use client secrets, rotate them.</li>
+<li>Secrets live in Key Vault, Jenkins credentials or GitHub secrets. Never in the repo, logs or notebooks. Mask values in logs.</li>
+<li>Application code reads secrets at run time (Databricks secret scope, ADF Key Vault linked service reference).</li>
+<li>Scan for leaked secrets, and if one leaks, revoke and rotate first, then clean history.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Rollback and safe release strategies for data pipelines</span><span class="lv hard">Hard</span></summary><div class="a">
+<ul>
+<li><b>Code rollback:</b> redeploy the previous tagged artifact (ARM template, bundle version). Keep old versions in the artifact feed.</li>
+<li><b>Data rollback:</b> Delta <code>RESTORE TABLE ... TO VERSION AS OF n</code> or time travel to repair a bad load. Idempotent loads make reruns safe.</li>
+<li><b>Backward-compatible schema changes (expand and contract):</b> first add the new column (expand), deploy code that writes both, migrate consumers, then remove the old column later (contract). Never rename or drop in one step.</li>
+<li><b>Blue-green for tables:</b> build the new table version, validate, then switch a view or alias to it.</li>
+<li><b>Canary:</b> run the new logic on a subset or one source first. <b>Feature flags</b> via config toggle.</li>
+<li>Avoid deploying while jobs run: pause triggers, wait for in-flight runs, deploy, resume.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Database and Delta schema migrations in the pipeline</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li>Keep DDL as <b>versioned scripts</b> in Git and apply them in order with a migration tool (Flyway, Liquibase, SQL Server DACPAC) or a simple version table you check yourself.</li>
+<li>Make scripts <b>idempotent</b>: <code>CREATE TABLE IF NOT EXISTS</code>, guarded <code>ALTER</code>.</li>
+<li>Run migrations <i>before</i> deploying code that needs the new schema, and keep them backward compatible.</li>
+<li>For Delta, enable column mapping before renaming or dropping columns, and use <code>mergeSchema</code> only where evolution is intended.</li>
+</ul>
+<pre><code>CREATE TABLE IF NOT EXISTS main.silver.orders (
+  order_id BIGINT NOT NULL, customer_id BIGINT, amount DECIMAL(12,2), updated_at TIMESTAMP
+) USING DELTA;
+ALTER TABLE main.silver.orders ADD COLUMNS (channel STRING);   -- guard with a version check in your runner</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Infrastructure as Code (Terraform, Bicep, ARM)</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li>IaC describes cloud resources (resource groups, storage, ADF, Key Vault, Databricks workspace, clusters, permissions) in files, so environments are reproducible and reviewable.</li>
+<li><b>Terraform:</b> multi-cloud, state file (store remotely, with locking), <code>plan</code> shows changes before <code>apply</code>, modules for reuse, a Databricks provider for workspace objects. <b>Bicep/ARM:</b> Azure-native, no state file.</li>
+<li>Typical split: IaC creates the platform, a bundle or release pipeline deploys the pipelines and jobs.</li>
+<li>Run <code>plan</code> in the PR, require approval before <code>apply</code> to prod.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Git commands interviewers ask about</span><span class="lv">Core</span></summary><div class="a">
+<div class="tbl"><table>
+<tr><th>Task</th><th>Command and note</th></tr>
+<tr><td>Merge vs rebase</td><td><code>git merge main</code> keeps history with a merge commit. <code>git rebase main</code> replays your commits on top for a linear history. Don't rebase shared branches.</td></tr>
+<tr><td>Undo a pushed commit</td><td><code>git revert &lt;sha&gt;</code> creates a new commit that undoes it (safe for shared history).</td></tr>
+<tr><td>Undo locally</td><td><code>git reset --soft HEAD~1</code> keeps changes staged. <code>--hard</code> discards them.</td></tr>
+<tr><td>Take one commit</td><td><code>git cherry-pick &lt;sha&gt;</code> (hotfix to a release branch)</td></tr>
+<tr><td>Park work</td><td><code>git stash</code>, <code>git stash pop</code></td></tr>
+<tr><td>Fix last commit</td><td><code>git commit --amend</code> (only if not pushed)</td></tr>
+<tr><td>Find the bad commit</td><td><code>git bisect start / good / bad</code></td></tr>
+<tr><td>See history</td><td><code>git log --oneline --graph --decorate</code>, <code>git blame file</code></td></tr>
+<tr><td>Tag a release</td><td><code>git tag -a v1.4.0 -m "release"</code> then <code>git push --tags</code></td></tr>
+<tr><td>Merge conflict</td><td>Edit the conflict markers, <code>git add</code>, then continue the merge or rebase.</td></tr>
+</table></div>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">A pipeline deployment failed. How do you troubleshoot and speed up CI?</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Failure:</b> read the failing stage log first. Typical causes: expired or missing credential or permission, wrong environment parameter, validation error in the template, dependency version drift, a test that depends on external data, triggers still running during deploy.</li>
+<li><b>Flaky tests:</b> remove network and time dependencies, use fixed seeds and local test data.</li>
+<li><b>Speed:</b> cache dependencies (pip, npm), run lint and unit tests in parallel, run only affected tests, keep heavy integration tests for merge to main, use a smaller test cluster.</li>
+<li>Always leave the pipeline <b>re-runnable</b>: a retry should not break anything.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Frame your own CI/CD experience (Jenkins and GitHub on your CV)</span><span class="lv">Core</span></summary><div class="a">
+<p>Your CV says you "supported deployment and release activities using Jenkins and GitHub". Be ready to answer these with specifics about what <i>you</i> did, and be honest about what the team owned:</p>
+<ul>
+<li>What did your Jenkins job do, step by step? Who wrote the Jenkinsfile? Which environments?</li>
+<li>How did ADF and Databricks changes move from dev to prod, and what was your role?</li>
+<li>What was the approval process, and who approved?</li>
+<li>Describe one failed release, how you found the cause and what you changed.</li>
+<li>What would you improve? (Good answers: automated tests, OIDC instead of secrets, bundles for Databricks, automated ADF publish, rollback plan.)</li>
+</ul>
+<p>If you only supported releases and didn't author pipelines, say that, then show you understand the design by explaining the stages above. That is credible and enough for most roles.</p>
+<button class="mark">Mark as revised</button></div></details>
+</section>
+
+<!-- ============ SCD & CDC ============ -->
+<section class="panel" id="p-scd" hidden>
+<h2>SCD, CDC and modeling</h2>
+<p class="lead">Almost every data engineering loop asks these. Know the concept, the table design, and the code.</p>
+
+<h3>Slowly Changing Dimensions</h3>
+<details class="q" data-lvl="core"><summary><span class="t">Explain SCD types 0, 1, 2, 3, 4, 6</span><span class="lv">Core</span></summary><div class="a">
+<div class="tbl"><table>
+<tr><th>Type</th><th>Behavior</th><th>History?</th><th>Example</th></tr>
+<tr><td>0</td><td>Never changes</td><td>n/a</td><td>Date of birth, original signup date</td></tr>
+<tr><td>1</td><td>Overwrite old value</td><td>No</td><td>Fix a typo in a name</td></tr>
+<tr><td>2</td><td>New row per change, with start/end dates and current flag</td><td>Full</td><td>Customer moves city, past sales keep the old city</td></tr>
+<tr><td>3</td><td>Extra column for previous value</td><td>Limited (one step)</td><td>current_region, previous_region</td></tr>
+<tr><td>4</td><td>Current table + separate history table</td><td>Full, separate</td><td>Mini-dimension for fast-changing attributes</td></tr>
+<tr><td>6</td><td>Hybrid 1+2+3: SCD2 rows plus current value column on every row</td><td>Full + current</td><td>Query history and "as is today" together</td></tr>
+</table></div>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Design an SCD2 dimension table</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>CREATE TABLE dim_customer (
+  customer_sk    BIGINT IDENTITY PRIMARY KEY,   -- surrogate key, what facts reference
+  customer_id    INT NOT NULL,                  -- natural / business key
+  name           VARCHAR(100),
+  city           VARCHAR(50),
+  row_hash       CHAR(64),                      -- hash of tracked columns
+  effective_from DATE NOT NULL,
+  effective_to   DATE NOT NULL DEFAULT '9999-12-31',
+  is_current     BIT NOT NULL DEFAULT 1
+);</code></pre>
+<ul>
+<li>Facts store the <b>surrogate key</b>, so each fact row points to the dimension version valid at event time.</li>
+<li>Choose which columns are tracked (SCD2) and which are overwritten (SCD1).</li>
+<li>Compute a <b>hash</b> over tracked columns to detect change cheaply: <code>sha2(concat_ws('||', name, city), 256)</code>. Handle NULLs with <code>coalesce</code> so NULL vs empty doesn't collide.</li>
+<li>Enforce exactly one current row per natural key.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Implement SCD2 in SQL with MERGE</span><span class="lv hard">Hard</span></summary><div class="a">
+<pre><code>-- Step 1: expire changed rows, insert brand-new keys
+MERGE dim_customer AS t
+USING stg_customer AS s
+   ON t.customer_id = s.customer_id AND t.is_current = 1
+WHEN MATCHED AND t.row_hash &lt;&gt; s.row_hash THEN
+  UPDATE SET t.is_current = 0, t.effective_to = s.load_date
+WHEN NOT MATCHED BY TARGET THEN
+  INSERT (customer_id, name, city, row_hash, effective_from, effective_to, is_current)
+  VALUES (s.customer_id, s.name, s.city, s.row_hash, s.load_date, '9999-12-31', 1);
+
+-- Step 2: insert the new version for keys that were just expired
+INSERT INTO dim_customer (customer_id, name, city, row_hash, effective_from, effective_to, is_current)
+SELECT s.customer_id, s.name, s.city, s.row_hash, s.load_date, '9999-12-31', 1
+FROM stg_customer s
+WHERE NOT EXISTS (SELECT 1 FROM dim_customer t
+                  WHERE t.customer_id = s.customer_id AND t.is_current = 1);</code></pre>
+<p>Why two steps: MERGE can't both update and insert for the same matched source row. After step 1, changed keys have no current row, so step 2 adds their new version. New keys already got a current row in step 1, so they're excluded.</p>
+<p>Deletes: add <code>WHEN NOT MATCHED BY SOURCE AND t.is_current=1 THEN UPDATE SET is_current=0, effective_to=GETDATE()</code> for soft deletes, only when the staging table is a full snapshot.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Implement SCD2 in PySpark with Delta MERGE (single merge with the union trick)</span><span class="lv hard">Hard</span></summary><div class="a">
+<pre><code>from delta.tables import DeltaTable
+from pyspark.sql import functions as F
+
+dim = DeltaTable.forName(spark, "gold.dim_customer")
+src = (spark.table("silver.customer_stg")
+       .withColumn("row_hash", F.sha2(F.concat_ws("||",
+             F.coalesce("name", F.lit("")), F.coalesce("city", F.lit(""))), 256)))
+
+# 1) rows whose tracked attributes changed
+changed = (src.alias("s")
+  .join(dim.toDF().filter("is_current = true").alias("t"), "customer_id")
+  .filter("s.row_hash &lt;&gt; t.row_hash")
+  .select("s.*"))
+
+# 2) changed rows get a NULL merge key so they never match -&gt; they INSERT the new version
+#    all source rows keep their key so changed ones match -&gt; they EXPIRE the old version
+staged = (changed.withColumn("mergeKey", F.lit(None).cast("int"))
+          .unionByName(src.withColumn("mergeKey", F.col("customer_id"))))
+
+(dim.alias("t")
+  .merge(staged.alias("s"), "t.customer_id = s.mergeKey AND t.is_current = true")
+  .whenMatchedUpdate(condition="t.row_hash &lt;&gt; s.row_hash",
+                     set={"is_current": "false", "effective_to": "current_date()"})
+  .whenNotMatchedInsert(values={
+      "customer_id": "s.customer_id", "name": "s.name", "city": "s.city",
+      "row_hash": "s.row_hash", "effective_from": "current_date()",
+      "effective_to": "cast('9999-12-31' as date)", "is_current": "true"})
+  .execute())</code></pre>
+<p>Make sure the source has one row per business key (dedupe first), otherwise MERGE raises "multiple source rows matched". If the dimension uses an identity surrogate key, create the column as <code>GENERATED ALWAYS AS IDENTITY</code> and leave it out of the insert.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Implement SCD1 (upsert) in SQL and Delta</span><span class="lv">Core</span></summary><div class="a">
+<pre><code>-- SQL
+MERGE dim_product t USING stg_product s ON t.product_id = s.product_id
+WHEN MATCHED AND t.row_hash &lt;&gt; s.row_hash THEN
+  UPDATE SET t.name = s.name, t.price = s.price, t.row_hash = s.row_hash
+WHEN NOT MATCHED THEN
+  INSERT (product_id, name, price, row_hash) VALUES (s.product_id, s.name, s.price, s.row_hash);
+
+# Delta
+(dim.alias("t").merge(src.alias("s"), "t.product_id = s.product_id")
+    .whenMatchedUpdateAll(condition="t.row_hash &lt;&gt; s.row_hash")
+    .whenNotMatchedInsertAll().execute())</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">SCD edge cases: late-arriving data, deletes, same-day multiple changes</span><span class="lv hard">Hard</span></summary><div class="a">
+<ul>
+<li><b>Late-arriving dimension (fact before dimension):</b> create an <b>inferred member</b> row with the business key and "Unknown" attributes, flag it, and update it when the real record arrives.</li>
+<li><b>Late-arriving change (older than current version):</b> need to insert in the middle of history and rebuild effective dates. Usually handled with a full reprocess of that key ordered by event time.</li>
+<li><b>Multiple changes in one batch:</b> order by change timestamp, apply sequentially or build the whole history for that key with LEAD to compute effective_to.</li>
+<li><b>Deletes:</b> soft delete (<code>is_deleted</code> flag or close the row). Hard deletes in the source only appear via CDC or a full snapshot comparison.</li>
+<li><b>Fact lookup:</b> join facts to the dimension where <code>fact_date BETWEEN effective_from AND effective_to</code> to get the surrogate key valid at that time.</li>
+</ul>
+<pre><code>-- build effective ranges from a change log in one pass
+SELECT customer_id, name, city, change_ts AS effective_from,
+       COALESCE(LEAD(change_ts) OVER (PARTITION BY customer_id ORDER BY change_ts), '9999-12-31') AS effective_to,
+       CASE WHEN LEAD(change_ts) OVER (PARTITION BY customer_id ORDER BY change_ts) IS NULL THEN 1 ELSE 0 END AS is_current
+FROM customer_changes;</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Change Data Capture</h3>
+<details class="q" data-lvl="core"><summary><span class="t">What is CDC and what are the ways to implement it?</span><span class="lv">Core</span></summary><div class="a">
+<p>CDC identifies only the rows that were inserted, updated or deleted since the last load, so you move deltas, not full tables.</p>
+<div class="tbl"><table>
+<tr><th>Approach</th><th>How</th><th>Catch</th></tr>
+<tr><td>Timestamp / watermark</td><td><code>WHERE modified_at &gt; last_run</code></td><td>Misses hard deletes, needs reliable column, clock issues</td></tr>
+<tr><td>Version / sequence column</td><td>Row version or increasing ID</td><td>Updates may not bump it</td></tr>
+<tr><td>Snapshot comparison</td><td>Diff today vs yesterday (hash compare, EXCEPT)</td><td>Expensive on big tables, but catches deletes</td></tr>
+<tr><td>Triggers</td><td>DB triggers write to audit table</td><td>Load on source, maintenance</td></tr>
+<tr><td>Log-based CDC</td><td>Read the transaction log (SQL Server CDC, Debezium, Oracle GoldenGate)</td><td>Best fidelity and low impact, more setup</td></tr>
+</table></div>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">SQL Server CDC vs Change Tracking</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>CDC:</b> reads the transaction log asynchronously, stores full before/after column values in <code>cdc.&lt;capture_instance&gt;_CT</code> tables. Needs SQL Agent. Gives history of each change.</li>
+<li><b>Change Tracking:</b> lightweight, synchronous, only records that a row (by PK) changed and the operation type, not the values or history. You join back to the table for current values.</li>
+</ul>
+<pre><code>EXEC sys.sp_cdc_enable_db;
+EXEC sys.sp_cdc_enable_table @source_schema='dbo', @source_name='orders',
+     @role_name=NULL, @supports_net_changes=1;
+
+DECLARE @from binary(10) = sys.fn_cdc_get_min_lsn('dbo_orders');
+DECLARE @to   binary(10) = sys.fn_cdc_get_max_lsn();
+SELECT * FROM cdc.fn_cdc_get_all_changes_dbo_orders(@from, @to, 'all');</code></pre>
+<p><code>__$operation</code>: <b>1</b> delete, <b>2</b> insert, <b>3</b> update (before image), <b>4</b> update (after image). Store the last processed LSN, like a watermark.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Apply a CDC feed to a Delta table (insert, update, delete)</span><span class="lv hard">Hard</span></summary><div class="a">
+<pre><code>from pyspark.sql import Window, functions as F
+
+# a batch can hold several changes per key: keep only the latest
+w = Window.partitionBy("id").orderBy(F.col("commit_ts").desc(), F.col("seq").desc())
+latest = (cdc.withColumn("rn", F.row_number().over(w)).filter("rn = 1").drop("rn"))
+
+(target.alias("t").merge(latest.alias("s"), "t.id = s.id")
+  .whenMatchedDelete(condition="s.op = 'D'")
+  .whenMatchedUpdateAll(condition="s.op &lt;&gt; 'D' AND s.commit_ts &gt; t.updated_at")  # ignore out-of-order old events
+  .whenNotMatchedInsertAll(condition="s.op &lt;&gt; 'D'")
+  .execute())</code></pre>
+<p>Key points: dedupe by key and keep the latest event, handle out-of-order events, make the merge idempotent so a replay doesn't change the result, and track the last processed offset or LSN.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Delta Change Data Feed (CDF)</span><span class="lv">Core</span></summary><div class="a">
+<p>CDF records row-level changes on a Delta table so downstream jobs read only what changed, the CDC pattern between silver and gold.</p>
+<pre><code>spark.sql("ALTER TABLE silver.orders SET TBLPROPERTIES (delta.enableChangeDataFeed = true)")
+
+chg = (spark.read.format("delta")
+       .option("readChangeFeed", "true")
+       .option("startingVersion", 12)
+       .table("silver.orders"))
+# extra columns: _change_type = insert | update_preimage | update_postimage | delete
+#                _commit_version, _commit_timestamp
+inserts_updates = chg.filter("_change_type IN ('insert','update_postimage')")</code></pre>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">CDC in ADF: what are the options?</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Watermark pattern</b> with Lookup + Copy + Stored Procedure (see ADF tab). Simple, no deletes.</li>
+<li><b>Tumbling window trigger</b> passing window start and end into the source query, so each window loads exactly its slice and can be backfilled.</li>
+<li><b>Native CDC resource</b> in ADF (Author → Change Data Capture) for supported sources, runs continuously or on a latency setting, no manual watermark logic.</li>
+<li><b>SQL Server CDC / Change Tracking</b> feeds queried by Copy activity, with the last LSN or version stored in a control table.</li>
+<li><b>Debezium + Kafka/Event Hubs</b> into Databricks Structured Streaming and Delta MERGE for log-based CDC at scale.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">SCD vs CDC: what is the difference?</span><span class="lv">Core</span></summary><div class="a">
+<p><b>CDC</b> is about <i>getting</i> the changes from the source (extract side). <b>SCD</b> is about <i>storing</i> history in the warehouse dimension (load/model side). They combine: CDC delivers changed rows, then an SCD1 or SCD2 merge applies them to the dimension.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<h3>Loading and modeling</h3>
+<details class="q" data-lvl="core"><summary><span class="t">Full load vs incremental load vs upsert. How do you make loads idempotent?</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Full load:</b> truncate and reload. Simple, expensive, fine for small reference tables.</li>
+<li><b>Incremental:</b> only new or changed data. Needs a watermark or CDC.</li>
+<li><b>Upsert (MERGE):</b> update existing, insert new.</li>
+<li><b>Idempotency:</b> rerunning gives the same result. Use MERGE on a business key, overwrite a partition for the load date, delete-then-insert by batch id, or write to staging and swap. Avoid blind appends without a key or batch id.</li>
+<li><b>Late data:</b> reload a trailing window (e.g. last 3 days) with MERGE.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Star schema vs snowflake. Fact table types. Grain</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li><b>Star:</b> central fact table joined directly to denormalized dimensions. Fast and simple for BI. <b>Snowflake:</b> dimensions normalized into sub-dimensions, less redundancy, more joins.</li>
+<li><b>Grain</b> is what one fact row represents (one order line, one daily account balance). Decide it first.</li>
+<li><b>Fact types:</b> transactional (one row per event), periodic snapshot (balance per day), accumulating snapshot (row updated as a process moves through stages), factless (events with no measures).</li>
+<li><b>Measures:</b> additive (revenue), semi-additive (balance, not across time), non-additive (ratios).</li>
+<li><b>Conformed dimensions</b> (same date or customer dimension across facts), <b>degenerate dimension</b> (order number kept in the fact), <b>junk dimension</b> (flags bundled), <b>role-playing dimension</b> (date as order date, ship date).</li>
+<li><b>Surrogate keys</b> insulate the warehouse from source key changes and enable SCD2.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Data quality checks you would put in a pipeline</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li>Row count reconciliation source vs target, null checks on keys, uniqueness on business keys, referential integrity (fact keys exist in dimension), accepted values, freshness (max timestamp).</li>
+<li>Quarantine bad records to a reject table instead of failing the whole load, and alert on thresholds.</li>
+<li>Delta constraints (<code>ALTER TABLE ... ADD CONSTRAINT ... CHECK</code>), expectations in Delta Live Tables, or tools like Great Expectations.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+</section>
+
+<!-- ============ SCENARIOS ============ -->
+<section class="panel" id="p-design" hidden>
+<h2>Scenarios and project story</h2>
+<p class="lead">Experienced candidates are judged on judgment. Practice answering these out loud in 2 to 3 minutes each.</p>
+
+<details class="q" data-lvl="core"><summary><span class="t">"Walk me through your project" (template)</span><span class="lv">Core</span></summary><div class="a">
+<p>Fill this in for your last real project, then rehearse it.</p>
+<ol>
+<li><b>Context:</b> client domain, business problem, data volume (e.g. "retail, 40 sources, 2 TB, daily + hourly feeds").</li>
+<li><b>Architecture:</b> sources → ADF (Copy via self-hosted IR) → ADLS bronze → Databricks (silver, gold, Delta) → Synapse/SQL → Power BI.</li>
+<li><b>Your role:</b> what <i>you</i> built (metadata-driven ingestion, SCD2 dimensions, incremental loads, optimization).</li>
+<li><b>Hard problem:</b> one real issue (skew, slow join, duplicate data, schema drift), how you diagnosed it, what you changed, the measurable result ("runtime from 3h to 40 min").</li>
+<li><b>Operations:</b> monitoring, alerts, reruns, data quality, CI/CD, cost.</li>
+</ol>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">Design an end-to-end Azure pipeline for daily sales from on-prem SQL Server</span><span class="lv hard">Hard</span></summary><div class="a">
+<ol>
+<li><b>Ingest:</b> ADF with self-hosted IR, metadata-driven Copy, incremental by watermark or CDC, land as Parquet in ADLS <code>bronze/source/table/load_date=...</code>.</li>
+<li><b>Process:</b> Databricks notebook per layer. Silver: dedupe, type, validate, quarantine bad rows, MERGE into Delta. Gold: SCD2 dimensions, fact tables with surrogate key lookups, aggregates.</li>
+<li><b>Serve:</b> Synapse serverless/dedicated pool or Databricks SQL, Power BI on gold.</li>
+<li><b>Orchestrate:</b> ADF parent pipeline, tumbling window trigger, dependency order, retries.</li>
+<li><b>Ops:</b> audit table, Azure Monitor alerts, Key Vault, managed identity, Git + CI/CD, data quality gates, cost controls (job clusters, auto-terminate).</li>
+</ol>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">A nightly pipeline failed at 3 AM. What do you do?</span><span class="lv hard">Hard</span></summary><div class="a">
+<ol>
+<li><b>Triage:</b> ADF Monitor, find the failed activity and error message. Is it transient (timeout, throttling), data (bad file, schema change) or logic (code bug)?</li>
+<li><b>Impact:</b> which downstream tables and dashboards are affected, notify stakeholders with an ETA.</li>
+<li><b>Fix and rerun:</b> rerun from the failed activity. Safe because loads are idempotent.</li>
+<li><b>Verify:</b> row counts and quality checks on the output.</li>
+<li><b>Prevent:</b> add retry, validation of input, alert, schema checks, and document the root cause.</li>
+</ol>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="hard"><summary><span class="t">A Spark job that took 30 minutes now takes 3 hours. How do you debug?</span><span class="lv hard">Hard</span></summary><div class="a">
+<ul>
+<li>What changed? Data volume, skew from a new hot key, new join, cluster config, small files from upstream, Spark version.</li>
+<li>Compare Spark UI of a good and bad run: stage durations, shuffle read/write sizes, spill, task time distribution, number of tasks.</li>
+<li>Check input: file count and sizes, partition pruning still working, statistics.</li>
+<li>Fix the specific cause: broadcast, salting, AQE, compaction, caching, right-sized shuffle partitions, cluster size.</li>
+</ul>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">The source adds, renames or drops a column. How do you cope?</span><span class="lv">Core</span></summary><div class="a">
+<p>Land raw data untouched in bronze (schema-on-read). For adds, enable Delta <code>mergeSchema</code> or Auto Loader schema evolution, with alerts so someone reviews it. Renames and type changes are breaking: detect by comparing the incoming schema to the expected one, fail or quarantine, and handle in a controlled change. Use data contracts with the source team where possible.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Duplicates appeared in the target table. Why and how do you prevent it?</span><span class="lv">Core</span></summary><div class="a">
+<p>Causes: rerun of an append-only load, overlapping watermark windows, source duplicates, MERGE on a non-unique key. Prevention: MERGE on a business key, dedupe the source with ROW_NUMBER first, partition overwrite or batch-id delete/insert, unique-key checks after the load. Clean-up: dedupe with a window and rewrite, or restore a Delta version from before the bad run.</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">How do you handle PII and access control?</span><span class="lv">Core</span></summary><div class="a">
+<p>Classify columns, mask or hash in silver (<code>sha2</code>, tokenization), restrict raw zone access, use column and row-level security or Unity Catalog grants, encrypt at rest and in transit, secrets in Key Vault, audit access, and apply retention and delete-on-request (Delta DELETE + VACUUM).</p>
+<button class="mark">Mark as revised</button></div></details>
+
+<details class="q" data-lvl="core"><summary><span class="t">Behavioral questions to prepare (one STAR story each)</span><span class="lv">Core</span></summary><div class="a">
+<ul>
+<li>A time you fixed a major performance or cost problem.</li>
+<li>A production incident you owned end to end.</li>
+<li>A disagreement with a teammate or stakeholder about a design.</li>
+<li>Something you learned recently (use this for the gap: the project you built this week).</li>
+<li>How you ensure data quality and trust in your pipelines.</li>
+</ul>
+<p>STAR = Situation, Task, Action, Result. Always end with a number or a concrete outcome.</p>
+<button class="mark">Mark as revised</button></div></details>
+</section>
+
+<!-- ============ CHEATSHEET ============ -->
+<section class="panel" id="p-cheat" hidden>
+<h2>Cheatsheet</h2>
+<p class="lead">Skim this the night before and an hour before the interview.</p>
+
+<h3>SQL quick syntax</h3>
+<pre><code>ROW_NUMBER() OVER (PARTITION BY k ORDER BY d DESC)       -- dedup / latest
+DENSE_RANK() OVER (PARTITION BY g ORDER BY s DESC)        -- nth highest
+LAG(col,1) OVER (ORDER BY d)   LEAD(col,1) OVER (ORDER BY d)
+SUM(x) OVER (ORDER BY d ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+NTILE(4) OVER (ORDER BY s)      PERCENT_RANK()   CUME_DIST()
+COALESCE(a,b)  NULLIF(a,0)  CASE WHEN .. THEN .. ELSE .. END
+DATEADD(day,-1,d)  DATEDIFF(day,a,b)  EOMONTH(d)  FORMAT(d,'yyyy-MM')
+STRING_AGG(name, ',')   -- T-SQL      collect_list / concat_ws  -- Spark
+WHERE NOT EXISTS (SELECT 1 FROM b WHERE b.k = a.k)
+WITH cte AS (...) SELECT ... FROM cte</code></pre>
+
+<h3>PySpark quick API</h3>
+<pre><code>df = spark.read.format("parquet").load(p)        df.write.mode("overwrite|append").format("delta").save(p)
+df.select, filter/where, withColumn, drop, dropDuplicates, distinct, orderBy, limit
+df.groupBy("k").agg(F.sum("x").alias("s"), F.count("*"), F.countDistinct("y"))
+a.join(b, "k", "inner|left|right|full|left_semi|left_anti")     broadcast(b)
+df.repartition(n,"k")   df.coalesce(n)   df.cache()   df.unpersist()
+F.when().otherwise()  F.coalesce  F.explode  F.split  F.regexp_extract  F.to_date  F.datediff  F.date_add
+F.row_number().over(Window.partitionBy().orderBy())   F.lag   F.lead   F.sum().over(w)
+df.explain(True)    df.printSchema()    df.rdd.getNumPartitions()
+spark.conf.set("spark.sql.shuffle.partitions", 400)
+spark.conf.set("spark.sql.adaptive.enabled", True)</code></pre>
+
+<h3>Delta quick commands</h3>
+<pre><code>MERGE INTO t USING s ON t.id = s.id
+  WHEN MATCHED AND s.op='D' THEN DELETE
+  WHEN MATCHED THEN UPDATE SET *
+  WHEN NOT MATCHED THEN INSERT *;
+DESCRIBE HISTORY t;   SELECT * FROM t VERSION AS OF 5;   RESTORE TABLE t TO VERSION AS OF 5;
+OPTIMIZE t ZORDER BY (col);   VACUUM t RETAIN 168 HOURS;   ALTER TABLE t SET TBLPROPERTIES (delta.enableChangeDataFeed = true);</code></pre>
+
+<h3>Spark config you should know</h3>
+<div class="tbl"><table>
+<tr><th>Setting</th><th>Meaning</th></tr>
+<tr><td>spark.sql.shuffle.partitions</td><td>Partitions after shuffle (200 default)</td></tr>
+<tr><td>spark.sql.autoBroadcastJoinThreshold</td><td>Max size to auto-broadcast (10 MB default)</td></tr>
+<tr><td>spark.sql.adaptive.enabled</td><td>AQE on/off</td></tr>
+<tr><td>spark.executor.memory / memoryOverhead</td><td>Heap and off-heap memory per executor</td></tr>
+<tr><td>spark.executor.cores / instances</td><td>Cores per executor, number of executors</td></tr>
+<tr><td>spark.sql.files.maxPartitionBytes</td><td>Target bytes per input partition (128 MB)</td></tr>
+<tr><td>spark.sql.sources.partitionOverwriteMode</td><td>static or dynamic partition overwrite</td></tr>
+</table></div>
+
+<h3>ADF at a glance</h3>
+<div class="tbl"><table>
+<tr><th>Need</th><th>Use</th></tr>
+<tr><td>Move data</td><td>Copy activity + IR</td></tr>
+<tr><td>Read config / watermark</td><td>Lookup (5000 rows / 4 MB)</td></tr>
+<tr><td>Loop over items</td><td>ForEach (batch count up to 50, no nested ForEach)</td></tr>
+<tr><td>Run on fixed windows with backfill</td><td>Tumbling window trigger</td></tr>
+<tr><td>Run when file lands</td><td>Event trigger (Event Grid)</td></tr>
+<tr><td>Secrets</td><td>Key Vault + managed identity</td></tr>
+<tr><td>Deploy</td><td>Git → publish → adf_publish ARM → release with parameter overrides</td></tr>
+<tr><td>Transform</td><td>Mapping data flow or Databricks notebook activity</td></tr>
+</table></div>
+
+<h3>SCD / CDC one-liners</h3>
+<ul>
+<li>SCD1 overwrite. SCD2 new row + effective_from/to + is_current + surrogate key. SCD3 previous-value column.</li>
+<li>SCD2 detection: hash of tracked columns. MERGE needs one source row per key.</li>
+<li>CDC: timestamp, trigger, snapshot diff, log-based. SQL Server <code>__$operation</code> 1 delete, 2 insert, 3 update-before, 4 update-after.</li>
+<li>Delta CDF <code>_change_type</code>: insert, update_preimage, update_postimage, delete.</li>
+<li>Always: idempotent, dedupe source, handle late and out-of-order data, record last processed watermark/LSN.</li>
+</ul>
+</section>
+
+<p class="empty" id="empty">No question matches that search.</p>
+</div>
+
+<script>
+(function(){
+  var tabs=["start","cv","sql","spark","dbx","adf","cicd","scd","design","cheat"];
+  var row=document.getElementById("tabrow"), btns=row.querySelectorAll("button");
+  var qbox=document.getElementById("q"), expBtn=document.getElementById("exp");
+  var cards=Array.prototype.slice.call(document.querySelectorAll("details.q"));
+  var KEY="de-guide-done-v1", done={};
+  try{done=JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){done={};}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(done));}catch(e){}}
+  function updateProgress(){
+    var n=cards.filter(function(c){return c.classList.contains("done");}).length;
+    document.getElementById("pc").textContent=n+" / "+cards.length+" revised";
+    document.getElementById("pb").style.width=(cards.length?100*n/cards.length:0)+"%";
+  }
+  cards.forEach(function(c,i){
+    c.dataset.i=i;
+    if(done[i]) {c.classList.add("done"); var b=c.querySelector(".mark"); if(b)b.textContent="Revised ✓";}
+    var mb=c.querySelector(".mark");
+    if(mb) mb.addEventListener("click",function(){
+      var on=!c.classList.contains("done");
+      c.classList.toggle("done",on);
+      mb.textContent=on?"Revised ✓":"Mark as revised";
+      if(on)done[i]=1; else delete done[i];
+      save(); updateProgress();
+    });
+    c.querySelectorAll("pre").forEach(function(pre){
+      var cb=document.createElement("button"); cb.className="cp"; cb.type="button"; cb.textContent="Copy";
+      cb.addEventListener("click",function(){
+        var t=pre.querySelector("code").innerText;
+        function fb(){var r=document.createRange();r.selectNodeContents(pre.querySelector("code"));var s=getSelection();s.removeAllRanges();s.addRange(r);cb.textContent="Selected";}
+        try{navigator.clipboard.writeText(t).then(function(){cb.textContent="Copied";setTimeout(function(){cb.textContent="Copy";},1200);},fb);}catch(e){fb();}
+      });
+      pre.appendChild(cb);
+    });
+  });
+  document.querySelectorAll(".panel > pre").forEach(function(pre){
+    var cb=document.createElement("button"); cb.className="cp"; cb.type="button"; cb.textContent="Copy";
+    cb.addEventListener("click",function(){
+      var t=pre.querySelector("code").innerText;
+      try{navigator.clipboard.writeText(t).then(function(){cb.textContent="Copied";setTimeout(function(){cb.textContent="Copy";},1200);},function(){});}catch(e){}
+    });
+    pre.appendChild(cb);
+  });
+  var current="start";
+  function show(name){
+    if(tabs.indexOf(name)<0)name="start";
+    current=name;
+    tabs.forEach(function(t){document.getElementById("p-"+t).hidden=(t!==name);});
+    btns.forEach(function(b){b.setAttribute("aria-selected",b.dataset.tab===name?"true":"false");});
+    qbox.value=""; filter(); setExpLabel();
+    if(location.hash.slice(1)!==name){try{history.replaceState(null,"","#"+name);}catch(e){}}
+    window.scrollTo(0,0);
+  }
+  btns.forEach(function(b){b.addEventListener("click",function(){show(b.dataset.tab);});});
+  window.addEventListener("hashchange",function(){var h=location.hash.slice(1); if(h&&h!==current)show(h);});
+  function setExpLabel(){
+    var panel=document.getElementById("p-"+current);
+    var all=panel.querySelectorAll("details.q"), open=panel.querySelectorAll("details.q[open]");
+    expBtn.textContent=(all.length&&open.length===all.length)?"Collapse all":"Expand all";
+    expBtn.style.display=all.length?"":"none";
+  }
+  expBtn.addEventListener("click",function(){
+    var scope=qbox.value.trim()?document:document.getElementById("p-"+current);
+    var vis=Array.prototype.filter.call(scope.querySelectorAll("details.q"),function(d){return !d.hidden && !d.closest("[hidden]");});
+    var openAll=vis.some(function(d){return !d.open;});
+    vis.forEach(function(d){d.open=openAll;});
+    expBtn.textContent=openAll?"Collapse all":"Expand all";
+  });
+  document.addEventListener("toggle",function(e){if(e.target.classList&&e.target.classList.contains("q"))setExpLabel();},true);
+  function filter(){
+    var term=qbox.value.trim().toLowerCase(), hits=0;
+    if(!term){
+      cards.forEach(function(c){c.hidden=false;});
+      tabs.forEach(function(t){document.getElementById("p-"+t).hidden=(t!==current);});
+      document.querySelectorAll(".panel h3,.panel .lead,.panel h2,.panel .plan,.panel .say,.panel > ul,.panel > pre,.panel .tbl").forEach(function(el){el.hidden=false;});
+      document.getElementById("empty").style.display="none"; return;
+    }
+    tabs.forEach(function(t){document.getElementById("p-"+t).hidden=false;});
+    document.querySelectorAll(".panel h3,.panel .lead,.panel .plan,.panel .say,.panel > ul,.panel > pre,.panel > .tbl").forEach(function(el){el.hidden=true;});
+    cards.forEach(function(c){
+      var m=c.textContent.toLowerCase().indexOf(term)>-1;
+      c.hidden=!m; if(m)hits++;
+    });
+    document.querySelectorAll(".panel").forEach(function(p){
+      var any=p.querySelector("details.q:not([hidden])");
+      p.hidden=!any;
+    });
+    document.getElementById("empty").style.display=hits?"none":"block";
+  }
+  qbox.addEventListener("input",function(){filter();setExpLabel();});
+  var h=location.hash.slice(1);
+  show(tabs.indexOf(h)>-1?h:"start");
+  updateProgress();
+})();
+</script>
+
+</body></html>
